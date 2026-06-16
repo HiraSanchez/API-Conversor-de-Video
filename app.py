@@ -91,7 +91,7 @@ MIN_BITRATE_KBPS = 32
 MAX_BITRATE_KBPS = 512
 APP_ENV = os.getenv("APP_ENV", "local").strip().lower()
 APP_HOST = os.getenv("APP_HOST", "127.0.0.1")
-APP_PORT = _env_int("APP_PORT", 8000, minimum=1)
+APP_PORT = _env_int("APP_PORT", _env_int("PORT", 8000, minimum=1), minimum=1)
 CORS_ORIGINS = _env_list("CORS_ORIGINS", "*")
 CORS_ALLOW_CREDENTIALS = _env_bool("CORS_ALLOW_CREDENTIALS", False)
 DEFAULT_MAX_DURATION_SEC = _env_int("DEFAULT_MAX_DURATION_SEC", 3 * 60 * 60, minimum=1)

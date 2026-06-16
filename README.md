@@ -154,6 +154,33 @@ Principais variáveis:
 - `JOB_WORKERS`: quantidade de conversões simultâneas.
 - `FFMPEG_PATH`: caminho absoluto opcional para o executável do FFmpeg.
 
+## Deploy No Render Pelo GitHub
+
+O projeto já inclui um arquivo `render.yaml`, então você pode criar o serviço no Render usando Blueprint.
+
+Passo a passo:
+
+1. Envie o projeto para o GitHub.
+2. Acesse o Render Dashboard.
+3. Clique em **New +** e escolha **Blueprint**.
+4. Conecte o repositório `HiraSanchez/API-Conversor-de-Video`.
+5. Confirme a criação do serviço.
+
+O Render usará estas configurações do `render.yaml`:
+
+```text
+Build Command: pip install -r requirements.txt
+Start Command: uvicorn app:app --host 0.0.0.0 --port $PORT
+Health Check: /health
+```
+
+Observações importantes para produção:
+
+- O Render define a porta automaticamente pela variável `PORT`; o app já está preparado para isso.
+- O plano gratuito pode hibernar após períodos sem uso.
+- O armazenamento local do Render é temporário. Arquivos convertidos e jobs em memória podem desaparecer quando o serviço reiniciar.
+- Para produção pública, os próximos passos recomendados são fila externa, armazenamento externo para downloads, autenticação, rate limit e políticas de uso.
+
 ## Como Usar
 
 ### Converter por URL
