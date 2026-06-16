@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <title>Audio Studio | Conversor de Vídeo para Áudio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root{
+      --bg:#11100e; --panel:#191b1f; --surface:#22242a; --field:#101215; --muted:#a9abb7;
+      --accent:#2fb7a4; --accent-2:#f0ad4e; --ok:#42c77b; --err:#ff6b7d; --line:#34363d; --ink:#f3f4f1;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family:Inter,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--ink);}
+    body::before{content:""; position:fixed; inset:0; pointer-events:none; background:radial-gradient(circle at top left, rgba(47,183,164,.18), transparent 34%), linear-gradient(135deg, rgba(240,173,78,.08), transparent 32%);}
+    a{color:#8dded4}
+    .app-shell{position:relative; max-width:1180px; margin:0 auto; padding:24px 18px 34px}
+    .topbar{display:flex; justify-content:space-between; gap:18px; align-items:center; margin-bottom:20px}
+    .brand{display:flex; align-items:center; gap:12px; min-width:0}
+    .brand-mark{width:42px; height:42px; border-radius:8px; display:grid; place-items:center; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#11100e; font-weight:900}
+    .brand h1{margin:0; font-size:24px; line-height:1.1; letter-spacing:0}
+    .brand p{margin:4px 0 0; color:var(--muted); font-size:14px}
+    .top-status{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .badge{display:inline-flex; align-items:center; border:1px solid var(--line); background:rgba(34,36,42,.86); padding:7px 10px; border-radius:999px; font-size:12px; color:#d9dad6}
+    .workspace{display:grid; gap:16px; grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr); align-items:start}
+    .card{background:rgba(25,27,31,.94); border:1px solid var(--line); border-radius:8px; padding:20px; box-shadow:0 18px 50px rgba(0,0,0,.24)}
+    .panel-title{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px}
+    .panel-title h2{font-size:18px; margin:0}
+    .panel-title p{margin:4px 0 0; color:var(--muted); font-size:13px}
+    .tabs{display:flex; gap:6px; margin:0 0 18px; padding:4px; border:1px solid var(--line); border-radius:8px; background:var(--field); width:max-content; max-width:100%}
+    .tab{padding:9px 12px; border-radius:6px; cursor:pointer; color:var(--muted); user-select:none; font-weight:700; font-size:13px}
+    .tab.active{background:var(--surface); color:var(--ink); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+    .row{display:grid; gap:14px; margin-bottom:14px}
+    @media (min-width:820px){ .row.two{grid-template-columns: 1.35fr .65fr;} .row.three{grid-template-columns: 1fr 1fr 1fr;} }
+    label{display:block; font-weight:700; font-size:13px; margin-bottom:7px}
+    input[type="text"], input[type="url"], input[type="number"], select{
+      width:100%; min-height:42px; padding:10px 12px; border-radius:6px; border:1px solid var(--line); background:var(--field); color:var(--ink);
+      outline:none; box-shadow:none;
+    }
+    input:focus, select:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(47,183,164,.16)}
+    input::placeholder{color:#747883}
+    input[disabled], select[disabled]{opacity:.65; cursor:not-allowed}
+    .actions{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    button{
+      min-height:42px; background:var(--accent); color:#07110f; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:800;
+      transition:.15s background,.15s transform;
+    }
+    button:hover{background:#45c8b8; transform:translateY(-1px)}
+    button.secondary{background:var(--surface); color:var(--ink); border:1px solid var(--line)}
+    button.secondary:hover{background:#2a2d34}
+    .status{min-height:22px; color:var(--muted); font-size:13px}
+    .status.ok{color:var(--ok)}
+    .status.err{color:var(--err)}
+    #formatsBox{color:var(--muted); font-size:13px; line-height:1.55}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{background:var(--field); color:#d9dad6; border:1px solid var(--line); padding:6px 10px; border-radius:999px; cursor:pointer; font-size:13px}
+    .chip:hover{border-color:var(--accent); color:var(--ink)}
+    .foot{color:var(--muted); font-size:13px}
+    .spinner{width:16px;height:16px;border:2px solid #fff3;border-top-color:#fff;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;margin-right:8px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .help{font-size:13px; color:var(--muted)}
+    .preview{display:grid; grid-template-columns:132px 1fr; gap:14px; align-items:center; border:1px solid var(--line); background:var(--field); border-radius:8px; padding:10px; margin:12px 0 14px}
+    .preview.no-thumb{grid-template-columns:1fr}
+    .preview img{width:132px; aspect-ratio:16/9; object-fit:cover; border-radius:6px; background:#0c0d0f}
+    .preview-title{font-weight:700; line-height:1.25; margin-bottom:6px}
+    .preview-meta{color:var(--muted); font-size:13px}
+    @media (max-width:520px){ .preview{grid-template-columns:1fr} .preview img{width:100%} }
+    .dropzone{border:1px dashed #61646d; background:var(--field); padding:28px 18px; border-radius:8px; text-align:center; color:#d9dad6}
+    .dropzone.drag{border-color:var(--accent); background:#13201e}
+    .progress{height:10px; background:var(--field); border:1px solid var(--line); border-radius:999px; overflow:hidden}
+    .bar{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); width:0%}
+    .pill{display:flex; gap:8px; align-items:center}
+    .api-base{display:grid; gap:8px}
+    .api-base .pill{display:grid; grid-template-columns:auto minmax(0,1fr) auto}
+    .api-base input{width:100% !important}
+    .hidden{display:none}
+    .side-section{border-top:1px solid var(--line); padding:16px 0}
+    .side-section:first-child{border-top:0; padding-top:0}
+    .side-section h3{margin:0 0 8px; font-size:13px; color:#d9dad6; text-transform:uppercase; letter-spacing:.06em}
+    .system-list{display:grid; gap:10px}
+    .system-row{display:flex; justify-content:space-between; gap:14px; color:var(--muted); font-size:13px}
+    .system-row strong{color:var(--ink); text-align:right}
+    .signal{height:70px; display:flex; align-items:end; gap:6px; border:1px solid var(--line); border-radius:8px; padding:12px; background:var(--field); overflow:hidden}
+    .signal span{flex:1; min-width:6px; border-radius:999px 999px 2px 2px; background:linear-gradient(180deg,var(--accent-2),var(--accent))}
+    .signal span:nth-child(1){height:28%}.signal span:nth-child(2){height:62%}.signal span:nth-child(3){height:38%}.signal span:nth-child(4){height:78%}.signal span:nth-child(5){height:45%}.signal span:nth-child(6){height:88%}.signal span:nth-child(7){height:52%}.signal span:nth-child(8){height:70%}.signal span:nth-child(9){height:34%}.signal span:nth-child(10){height:58%}
+    @media (max-width:920px){ .workspace{grid-template-columns:1fr} .topbar{align-items:flex-start; flex-direction:column} .top-status{justify-content:flex-start} }
+    @media (max-width:620px){ .app-shell{padding:18px 12px 28px} .card{padding:16px} .actions button{width:100%} .tabs{width:100%} .tab{flex:1; text-align:center} .api-base .pill{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">A</div>
+        <div>
+          <h1>Audio Studio</h1>
+          <p>Conversão de mídia para áudio com controle de formato e qualidade.</p>
+        </div>
+      </div>
+      <div class="top-status">
+        <span class="badge">YouTube</span>
+        <span class="badge">TikTok</span>
+        <span class="badge">Instagram</span>
+        <span class="badge">Arquivos locais</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="card">
+        <div class="panel-title">
+          <div>
+            <h2>Converter mídia</h2>
+            <p>Cole uma URL ou envie um arquivo para gerar áudio.</p>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" data-tab="url">Via URL</div>
+          <div class="tab" data-tab="file">Via Arquivo</div>
+        </div>
+
+        <!-- URL -->
+        <form id="formUrl">
+          <div class="row two">
+            <div>
+              <label>URL do vídeo</label>
+              <input type="url" id="urlInput" placeholder="https://..." required />
+              <div class="help">YouTube e várias plataformas suportadas pelo <code>yt-dlp</code>.</div>
+            </div>
+            <div>
+              <label>Formato</label>
+              <select id="formatUrl" required></select>
+              <div class="help">Lossless ignora bitrate.</div>
+            </div>
+          </div>
+
+          <div id="urlPreview" class="preview hidden"></div>
+
+          <div id="urlJobBox" class="hidden" style="margin:12px 0">
+            <label id="urlJobText">Aguardando conversão</label>
+            <div class="progress" style="margin-top:6px"><div id="urlJobBar" class="bar"></div></div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Bitrate (kbps) – apenas lossy</label>
+              <input type="number" id="bitrateUrl" min="32" max="512" step="1" placeholder="ex: 192" />
+              <div id="chipsUrl" class="chips" style="margin-top:6px"></div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="secondary" id="btnAnalyzeUrl">Analisar URL</button>
+            <button type="submit">Converter URL</button>
+            <button type="button" class="secondary" id="btnExUrl">Exemplo</button>
+            <span id="statusUrl" class="status"></span>
+          </div>
+        </form>
+
+        <!-- FILE -->
+        <form id="formFile" class="hidden">
+          <label>Arquivo de vídeo/áudio</label>
+          <div id="drop" class="dropzone">
+            <div id="dropLabel">
+              Arraste e solte aqui ou clique para escolher.
+              <br/><span class="help">Tipos aceitos: vídeo/áudio comuns (mp4, mkv, mov, mp3…)</span>
+            </div>
+            <input type="file" id="fileInput" accept="video/*,audio/*" style="display:none" />
+          </div>
+
+          <div class="row two" style="margin-top:10px">
+            <div>
+              <label>Formato</label>
+              <select id="formatFile" required></select>
+            </div>
+            <div>
+              <label>Bitrate (kbps) – apenas lossy</label>
+              <input type="number" id="bitrateFile" min="32" max="512" step="1" placeholder="ex: 192" />
+              <div id="chipsFile" class="chips" style="margin-top:6px"></div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:6px">
+            <div>
+              <label>Progresso do upload</label>
+              <div class="progress"><div id="bar" class="bar"></div></div>
+            </div>
+          </div>
+
+          <div class="actions" style="margin-top:10px">
+            <button type="submit">Converter Arquivo</button>
+            <span id="statusFile" class="status"></span>
+          </div>
+        </form>
+
+        <div class="foot" style="margin-top:10px">
+          Use apenas conteúdo próprio, autorizado ou permitido pela plataforma. Bitrate é aplicado somente em formatos <b>lossy</b>.
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="side-section">
+          <h3>Sistema</h3>
+          <div class="signal" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <div class="side-section">
+          <h3>Formatos</h3>
+          <div id="formatsBox">Carregando formatos…</div>
+        </div>
+
+        <div class="side-section">
+          <h3>Parâmetros</h3>
+          <div class="system-list">
+            <div class="system-row"><span>Qualidade leve</span><strong>128 kbps</strong></div>
+            <div class="system-row"><span>Qualidade alta</span><strong>256-320 kbps</strong></div>
+            <div class="system-row"><span>Sem perdas</span><strong>WAV, FLAC, ALAC</strong></div>
+          </div>
+        </div>
+
+        <div class="side-section">
+          <h3>API</h3>
+          <div class="api-base">
+            <span class="pill">
+              <strong>Base URL</strong>
+              <input type="text" id="apiBase" placeholder="ex.: http://localhost:8000" />
+              <button id="btnSetApi" class="secondary">Aplicar</button>
+            </span>
+            <span class="help">Deixe vazio para usar o mesmo host desta página.</span>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+<script>
+  // ============================
+  // Config & State
+  // ============================
+  const E = (s) => document.querySelector(s);
+  const formatsBox = E('#formatsBox');
+  const formatMeta = {}; // { fmt: { category, ext } }
+  let recommendedBitrates = [];
+  let API_BASE = ''; // vazio => mesmo host
+  let activeUrlJobTimer = null;
+  let activeFileJobTimer = null;
+
+  // Persistência simples do API Base no localStorage
+  const savedBase = localStorage.getItem('api_base_url');
+  if (savedBase) { API_BASE = savedBase; E('#apiBase').value = savedBase; }
+
+  E('#btnSetApi').addEventListener('click', () => {
+    API_BASE = (E('#apiBase').value || '').trim().replace(/\/+$/, ''); // remove trailing /
+    localStorage.setItem('api_base_url', API_BASE);
+    toast('API Base atualizada: ' + (API_BASE || '(mesmo host)'), 'ok');
+    loadFormats(); // tentar de novo, caso mude
+  });
+
+  function api(path){ return (API_BASE || '') + path; }
+
+  // ============================
+  // UI Helpers
+  // ============================
+  function setBitrateEnabled(input, enabled){
+    input.disabled = !enabled;
+    if (!enabled){
+      input.value = '';
+      input.placeholder = 'Ignorado (lossless)';
+    } else {
+      if (!input.value) input.value = 192;
+      input.placeholder = 'ex: 192';
+    }
+  }
+
+  function populateFormatSelect(selectEl, catalog){
+    selectEl.innerHTML = '';
+    const addGroup = (label, items) => {
+      const og = document.createElement('optgroup');
+      og.label = label;
+      items.forEach(it => {
+        const opt = document.createElement('option');
+        opt.value = it.format;
+        opt.textContent = `${it.format} (${it.ext})`;
+        og.appendChild(opt);
+        formatMeta[it.format] = { category: label.toLowerCase(), ext: it.ext };
+      });
+      selectEl.appendChild(og);
+    };
+    addGroup('Lossy', catalog.categories.lossy.formats);
+    addGroup('Lossless', catalog.categories.lossless.formats);
+    // default
+    selectEl.value = 'mp3';
+  }
+
+  function makeChips(container, onPick){
+    container.innerHTML = '';
+    recommendedBitrates.forEach(v => {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = `${v} kbps`;
+      chip.addEventListener('click', () => onPick(v));
+      container.appendChild(chip);
+    });
+  }
+
+  function setStatus(el, msg, kind=''){
+    el.className = 'status ' + (kind||'');
+    el.innerHTML = msg || '';
+  }
+
+  function clearUrlPreview(){
+    const preview = E('#urlPreview');
+    preview.classList.add('hidden');
+    preview.innerHTML = '';
+  }
+
+  function clearUrlJob(){
+    if (activeUrlJobTimer) {
+      clearTimeout(activeUrlJobTimer);
+      activeUrlJobTimer = null;
+    }
+    E('#urlJobBox').classList.add('hidden');
+    E('#urlJobBar').style.width = '0%';
+    E('#urlJobText').textContent = 'Aguardando conversão';
+  }
+
+  function renderUrlJob(job){
+    const box = E('#urlJobBox');
+    const bar = E('#urlJobBar');
+    const text = E('#urlJobText');
+    const progress = Number.isFinite(job.progress) ? job.progress : 0;
+
+    box.classList.remove('hidden');
+    bar.style.width = Math.max(0, Math.min(100, progress)) + '%';
+    text.textContent = job.message || job.stage || 'Processando';
+
+    if (job.analysis && E('#urlPreview').classList.contains('hidden')) {
+      renderUrlPreview(job.analysis);
+    }
+  }
+
+  async function downloadJobResult(job){
+    const res = await fetch(api(job.download_url));
+    if (!res.ok){
+      let detail = res.statusText;
+      try { const j = await res.json(); if (j.detail) detail = j.detail; } catch(_) {}
+      throw new Error(detail);
+    }
+
+    const disp = res.headers.get('Content-Disposition') || '';
+    const m1 = disp.match(/filename\*?=UTF-8''([^"]+)/i);
+    const m2 = disp.match(/filename="?([^"]+)"?/i);
+    const filename = (m1 && decodeURIComponent(m1[1])) || (m2 && m2[1]) || job.filename || 'audio';
+    const blob = await res.blob();
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  async function pollUrlJob(jobId){
+    const status = E('#statusUrl');
+    try{
+      const res = await fetch(api(`/jobs/${jobId}`));
+      if (!res.ok){
+        let detail = res.statusText;
+        try { const j = await res.json(); if (j.detail) detail = j.detail; } catch(_) {}
+        setStatus(status, 'Erro: ' + detail, 'err');
+        return;
+      }
+
+      const job = await res.json();
+      renderUrlJob(job);
+
+      if (job.status === 'completed') {
+        await downloadJobResult(job);
+        setStatus(status, 'Concluído. Download iniciado.', 'ok');
+        return;
+      }
+
+      if (job.status === 'failed') {
+        setStatus(status, 'Erro: ' + (job.error || 'Falha na conversão'), 'err');
+        return;
+      }
+
+      activeUrlJobTimer = setTimeout(() => pollUrlJob(jobId), 1500);
+    }catch(err){
+      setStatus(status, 'Erro: ' + err.message, 'err');
+    }
+  }
+
+  function clearFileJob(){
+    if (activeFileJobTimer) {
+      clearTimeout(activeFileJobTimer);
+      activeFileJobTimer = null;
+    }
+    E('#bar').style.width = '0%';
+  }
+
+  function renderFileJob(job){
+    const progress = Number.isFinite(job.progress) ? job.progress : 0;
+    E('#bar').style.width = Math.max(0, Math.min(100, progress)) + '%';
+  }
+
+  async function pollFileJob(jobId){
+    const status = E('#statusFile');
+    try{
+      const res = await fetch(api(`/jobs/${jobId}`));
+      if (!res.ok){
+        let detail = res.statusText;
+        try { const j = await res.json(); if (j.detail) detail = j.detail; } catch(_) {}
+        setStatus(status, 'Erro: ' + detail, 'err');
+        return;
+      }
+
+      const job = await res.json();
+      renderFileJob(job);
+
+      if (job.status === 'completed') {
+        await downloadJobResult(job);
+        setStatus(status, 'Concluído. Download iniciado.', 'ok');
+        return;
+      }
+
+      if (job.status === 'failed') {
+        setStatus(status, 'Erro: ' + (job.error || 'Falha na conversão'), 'err');
+        return;
+      }
+
+      setStatus(status, '<span class="spinner"></span>' + (job.message || 'Processando arquivo…'));
+      activeFileJobTimer = setTimeout(() => pollFileJob(jobId), 1500);
+    }catch(err){
+      setStatus(status, 'Erro: ' + err.message, 'err');
+    }
+  }
+
+  function renderUrlPreview(data){
+    const preview = E('#urlPreview');
+    preview.innerHTML = '';
+    preview.classList.toggle('no-thumb', !data.thumbnail);
+    if (data.thumbnail) {
+      const img = document.createElement('img');
+      img.src = data.thumbnail;
+      img.alt = '';
+      preview.appendChild(img);
+    }
+
+    const details = document.createElement('div');
+    const title = document.createElement('div');
+    title.className = 'preview-title';
+    title.textContent = data.title || 'Sem título';
+
+    const meta = document.createElement('div');
+    meta.className = 'preview-meta';
+    const parts = [
+      data.platform,
+      data.duration_text ? `Duração ${data.duration_text}` : null,
+      data.uploader
+    ].filter(Boolean);
+    meta.textContent = parts.join(' · ');
+
+    details.appendChild(title);
+    details.appendChild(meta);
+    preview.appendChild(details);
+    preview.classList.remove('hidden');
+  }
+
+  function toast(msg, kind=''){
+    const div = document.createElement('div');
+    div.textContent = msg;
+    div.style.position='fixed';
+    div.style.right='16px';
+    div.style.bottom='16px';
+    div.style.background = kind==='err' ? '#6b1f2c' : '#1c3a22';
+    div.style.border = '1px solid ' + (kind==='err' ? '#ff5c77' : '#29c16f');
+    div.style.color = '#fff';
+    div.style.padding = '10px 14px';
+    div.style.borderRadius='10px';
+    div.style.boxShadow='0 6px 22px rgba(0,0,0,.35)';
+    document.body.appendChild(div);
+    setTimeout(()=>{ div.remove(); }, 2600);
+  }
+
+  function onFormatChange(selectEl, bitrateInput){
+    const fmt = selectEl.value.toLowerCase();
+    const cat = (formatMeta[fmt] || {}).category;
+    setBitrateEnabled(bitrateInput, cat !== 'lossless');
+  }
+
+  document.addEventListener('change', (ev) => {
+    if (ev.target.id === 'formatUrl') onFormatChange(E('#formatUrl'), E('#bitrateUrl'));
+    if (ev.target.id === 'formatFile') onFormatChange(E('#formatFile'), E('#bitrateFile'));
+  });
+
+  // ============================
+  // Load formats
+  // ============================
+  async function loadFormats(){
+    try{
+      formatsBox.textContent = 'Carregando formatos…';
+      const res = await fetch(api('/formats'));
+      if (!res.ok) throw new Error('Não foi possível carregar /formats');
+      const catalog = await res.json();
+
+      recommendedBitrates = catalog?.categories?.lossy?.recommended_bitrates_kbps || [128,192,256,320];
+
+      populateFormatSelect(E('#formatUrl'), catalog);
+      populateFormatSelect(E('#formatFile'), catalog);
+
+      makeChips(E('#chipsUrl'), (v)=>{ E('#bitrateUrl').value = v; });
+      makeChips(E('#chipsFile'), (v)=>{ E('#bitrateFile').value = v; });
+
+      // habilitar bitrate inicialmente como lossy
+      setBitrateEnabled(E('#bitrateUrl'), true);
+      setBitrateEnabled(E('#bitrateFile'), true);
+
+      const lossyList = (catalog.categories.lossy.formats||[]).map(f=>f.format).join(', ');
+      const losslessList = (catalog.categories.lossless.formats||[]).map(f=>f.format).join(', ');
+      formatsBox.innerHTML = `<b>Lossy:</b> ${lossyList} | <b>Lossless:</b> ${losslessList}<br/>
+        <b>Bitrates recomendados:</b> ${recommendedBitrates.join(' / ')} kbps (apenas lossy)`;
+    }catch(e){
+      formatsBox.innerHTML = `<span style="color:#ff8899">Erro ao carregar formatos.</span>`;
+      toast('Falha ao consultar /formats: ' + e.message, 'err');
+    }
+  }
+
+  // ============================
+  // Tabs
+  // ============================
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const tab = t.getAttribute('data-tab');
+    E('#formUrl').classList.toggle('hidden', tab !== 'url');
+    E('#formFile').classList.toggle('hidden', tab !== 'file');
+  }));
+
+  // ============================
+  // URL Flow
+  // ============================
+  E('#btnExUrl').addEventListener('click', () => {
+    E('#urlInput').value = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+    E('#formatUrl').value = 'mp3';
+    E('#bitrateUrl').value = 192;
+    clearUrlPreview();
+    clearUrlJob();
+    setStatus(E('#statusUrl'), '');
+  });
+
+  E('#urlInput').addEventListener('input', () => {
+    clearUrlPreview();
+    clearUrlJob();
+  });
+
+  E('#btnAnalyzeUrl').addEventListener('click', async () => {
+    const url = E('#urlInput').value.trim();
+    const status = E('#statusUrl');
+
+    if (!url){ setStatus(status,'Informe a URL.','err'); return; }
+
+    clearUrlPreview();
+    setStatus(status, '<span class="spinner"></span>Analisando URL…');
+    try{
+      const res = await fetch(api('/analyze/url'), {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ url })
+      });
+      if (!res.ok){
+        let detail = res.statusText;
+        try { const j = await res.json(); if (j.detail) detail = j.detail; } catch(_) {}
+        setStatus(status, 'Erro: ' + detail, 'err'); return;
+      }
+      const data = await res.json();
+      renderUrlPreview(data);
+      setStatus(status, 'URL analisada. Pronto para converter.', 'ok');
+    }catch(err){
+      setStatus(status, 'Erro: ' + err.message, 'err');
+    }
+  });
+
+  E('#formUrl').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const url = E('#urlInput').value.trim();
+    const audio_format = E('#formatUrl').value;
+    const br = E('#bitrateUrl').value;
+    const bitrate_kbps = br ? parseInt(br, 10) : null;
+    const status = E('#statusUrl');
+
+    if (!url){ setStatus(status,'Informe a URL.','err'); return; }
+
+    clearUrlJob();
+    setStatus(status, '<span class="spinner"></span>Criando job de conversão…');
+    try{
+      const res = await fetch(api('/jobs/url'), {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ url, audio_format, bitrate_kbps })
+      });
+      if (!res.ok){
+        let detail = res.statusText;
+        try { const j = await res.json(); if (j.detail) detail = j.detail; } catch(_) {}
+        setStatus(status, 'Erro: ' + detail, 'err'); return;
+      }
+      const job = await res.json();
+      renderUrlJob(job);
+      setStatus(status, 'Job criado. Acompanhando conversão…');
+      pollUrlJob(job.id);
+    }catch(err){
+      setStatus(status, 'Erro: ' + err.message, 'err');
+    }
+  });
+
+  // ============================
+  // File Flow (com progresso)
+  // ============================
+  const drop = E('#drop');
+  const fileInput = E('#fileInput');
+  const dropLabel = E('#dropLabel');
+  let selectedFile = null;
+
+  function setSelectedFile(file){
+    selectedFile = file || null;
+    clearFileJob();
+    setStatus(E('#statusFile'), '');
+    if (selectedFile) {
+      dropLabel.textContent = `Arquivo: ${selectedFile.name}. Clique para trocar.`;
+    } else {
+      dropLabel.innerHTML = 'Arraste e solte aqui ou clique para escolher.<br/><span class="help">Tipos aceitos: vídeo/áudio comuns (mp4, mkv, mov, mp3…)</span>';
+    }
+  }
+
+  drop.addEventListener('click', ()=> fileInput.click());
+  fileInput.addEventListener('change', () => setSelectedFile(fileInput.files[0]));
+  drop.addEventListener('dragover', (e)=>{ e.preventDefault(); drop.classList.add('drag'); });
+  drop.addEventListener('dragleave', ()=> drop.classList.remove('drag'));
+  drop.addEventListener('drop', (e)=>{
+    e.preventDefault();
+    drop.classList.remove('drag');
+    if (e.dataTransfer.files && e.dataTransfer.files[0]){
+      setSelectedFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  E('#formFile').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = selectedFile;
+    const audio_format = E('#formatFile').value;
+    const br = E('#bitrateFile').value;
+    const bitrate_kbps = br ? parseInt(br,10) : null;
+    const status = E('#statusFile');
+    const bar = E('#bar');
+
+    if (!f){ setStatus(status,'Selecione um arquivo.','err'); return; }
+
+    clearFileJob();
+    setStatus(status, 'Enviando…'); bar.style.width = '0%';
+
+    const fd = new FormData();
+    fd.append('file', f);
+    fd.append('audio_format', audio_format);
+    if (bitrate_kbps) fd.append('bitrate_kbps', String(bitrate_kbps));
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', api('/jobs/file'), true);
+    xhr.responseType = 'json';
+
+    xhr.upload.onprogress = (ev) => {
+      if (ev.lengthComputable) {
+        const pct = Math.round(ev.loaded * 100 / ev.total);
+        bar.style.width = pct + '%';
+      }
+    };
+
+    xhr.onreadystatechange = async () => {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const job = xhr.response;
+        renderFileJob(job);
+        setStatus(status, '<span class="spinner"></span>Upload concluído. Acompanhando conversão…');
+        pollFileJob(job.id);
+      } else {
+        // Tentar ler erro como texto/JSON
+        let detail = 'Falha ao criar job';
+        if (xhr.response && xhr.response.detail) detail = xhr.response.detail;
+        else if (xhr.responseText) {
+          try { const j = JSON.parse(xhr.responseText); if (j.detail) detail = j.detail; }
+          catch(_) { detail = xhr.responseText; }
+        }
+        setStatus(status, 'Erro: ' + detail, 'err');
+      }
+    };
+
+    xhr.onerror = () => setStatus(status, 'Erro de rede ao enviar.', 'err');
+    xhr.send(fd);
+  });
+
+  // Inicialização
+  loadFormats();
+</script>
+</body>
+</html>
