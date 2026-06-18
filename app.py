@@ -14,6 +14,7 @@ from typing import Optional, List, Dict
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, HttpUrl, Field
 
 try:
@@ -160,7 +161,7 @@ logger.propagate = False
 
 
 app = FastAPI(
-    title="Video to Audio API",
+    title="BitMobo Media Studio API",
     version="1.0.0",
     description="Converte vídeos (URL ou upload) em áudios com formato e bitrate configuráveis."
 )
@@ -173,6 +174,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+BRAND_DIR = os.path.join(RESOURCE_DIR, "brand")
+if os.path.isdir(BRAND_DIR):
+    app.mount("/brand", StaticFiles(directory=BRAND_DIR), name="brand")
 
 @app.get("/health")
 def health():
@@ -197,6 +202,13 @@ def serve_index():
     if not os.path.exists(index_path):
         raise HTTPException(status_code=500, detail="index.html não encontrado no servidor.")
     return FileResponse(index_path, media_type="text/html")
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    icon_path = os.path.join(BRAND_DIR, "bitmobo-mark.png")
+    if not os.path.exists(icon_path):
+        raise HTTPException(status_code=404, detail="favicon nao encontrado.")
+    return FileResponse(icon_path, media_type="image/png")
 
 @app.get("/formats")
 def get_formats():

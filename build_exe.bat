@@ -37,6 +37,7 @@ echo Gerando executavel unico (AudioStudio.exe)...
   --onefile ^
   --name AudioStudio ^
   --add-data "index.html;." ^
+  --add-data "brand;brand" ^
   --add-data ".env.example;." ^
   --collect-all yt_dlp ^
   --collect-all imageio_ffmpeg ^
