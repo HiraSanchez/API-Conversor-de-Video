@@ -5,7 +5,6 @@
 
     <application
         android:allowBackup="true"
-        android:extractNativeLibs="true"
         android:icon="@drawable/bitmobo_mark"
         android:label="@string/app_name"
         android:roundIcon="@drawable/bitmobo_mark"
