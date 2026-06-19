@@ -36,10 +36,34 @@ jobs:
 
       - name: Build APK
         working-directory: android-app
-        run: gradle :app:assembleDebug --no-daemon --stacktrace
+        run: |
+          set +e
+          gradle :app:assembleDebug --no-daemon --stacktrace --console=plain 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+
+          if [ "$status" -ne 0 ]; then
+            echo "::group::Build failure summary"
+            grep -Ei "^(e:|error:|FAILURE:|\* What went wrong|Execution failed|Could not|Caused by:|> Task .*FAILED)" build.log | tail -n 80 || true
+            echo "::endgroup::"
+
+            summary=$(grep -Ei "^(e:|error:|FAILURE:|\* What went wrong|Execution failed|Could not|Caused by:|> Task .*FAILED)" build.log | tail -n 20 || true)
+            if [ -z "$summary" ]; then
+              summary=$(tail -n 80 build.log)
+            fi
+            summary=$(printf "%s" "$summary" | sed -e 's/%/%25/g' -e 's/\r/%0D/g' -e 's/\n/%0A/g' | head -c 3500)
+            echo "::error title=APK build failed::$summary"
+            exit "$status"
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: bitmobo-media-studio-debug-apk
           path: android-app/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-build-log
+          path: android-app/build.log
