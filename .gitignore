@@ -8,3 +8,8 @@ dist/
 
 .env
 *.log
+
+.gradle/
+local.properties
+*.apk
+*.aab

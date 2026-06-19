@@ -1,0 +1,45 @@
+name: Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "android-app/**"
+      - ".github/workflows/android-apk.yml"
+
+jobs:
+  build-debug-apk:
+    name: Build debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android packages
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Install Gradle
+        run: |
+          curl -L "https://services.gradle.org/distributions/gradle-9.6.0-bin.zip" -o gradle.zip
+          unzip -q gradle.zip
+          echo "$PWD/gradle-9.6.0/bin" >> "$GITHUB_PATH"
+
+      - name: Build APK
+        working-directory: android-app
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitmobo-media-studio-debug-apk
+          path: android-app/app/build/outputs/apk/debug/app-debug.apk

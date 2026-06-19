@@ -22,6 +22,8 @@ O projeto usa **FastAPI**, **yt-dlp** e **FFmpeg**. A interface web já vem embu
 ```text
 app.py              Backend FastAPI e lógica de conversão
 index.html          Interface web
+android-app/        Aplicativo Android nativo BitMobo Media Studio
+.github/workflows/  Build automatico do APK Android
 requirements.txt    Dependências Python
 .env.example        Modelo de configuração
 setup_and_run.bat   Prepara venv e roda localmente
@@ -122,6 +124,28 @@ Depois acesse:
 ```text
 http://127.0.0.1:8000
 ```
+
+## Aplicativo Android
+
+O projeto tambem possui uma base Android nativa em `android-app/`, criada para virar um APK instalavel no celular sem depender do Render ou do PC ligado para o processamento final.
+
+Estado atual do app:
+
+- Kotlin + Jetpack Compose.
+- Identidade visual BitMobo.
+- Tela inicial mobile com URL, formato, qualidade e painel de motor local.
+- Build automatico de APK via GitHub Actions.
+
+Como gerar o APK sem Android Studio:
+
+1. Envie as alteracoes para o GitHub.
+2. Abra a aba **Actions** do repositorio.
+3. Selecione o workflow **Android APK**.
+4. Clique em **Run workflow**.
+5. Baixe o artefato `bitmobo-media-studio-debug-apk`.
+6. Extraia o arquivo e instale `app-debug.apk` no Android.
+
+Nesta primeira etapa, o app Android ainda nao executa `yt-dlp` nem FFmpeg. Isso entra nas proximas partes para reduzir risco de erro.
 
 ## Configuração `.env`
 
