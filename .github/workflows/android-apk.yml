@@ -46,8 +46,7 @@ jobs:
             grep -Ei "^(e:|error:|FAILURE:|\* What went wrong|Execution failed|Could not|Caused by:|> Task .*FAILED)" build.log | tail -n 80 || true
             echo "::endgroup::"
 
-            summary=$(tail -n 120 build.log)
-            summary=$(printf "%s" "$summary" | sed -e 's/%/%25/g' -e 's/\r/%0D/g' -e 's/\n/%0A/g' | head -c 3500)
+            summary=$(awk '{ gsub(/%/, "%25"); gsub(/\r/, ""); printf "%s | ", $0 }' build.log | head -c 7000)
             echo "::error title=APK build failed::$summary"
             exit "$status"
           fi
