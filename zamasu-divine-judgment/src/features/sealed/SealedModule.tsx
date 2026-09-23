@@ -37,7 +37,7 @@ export function SealedModule({ realm, decree, promises, preview, previewLabel }:
           <motion.p variants={revealUp} custom={2} className="mt-6 font-scripture text-2xl leading-snug text-white/75 italic sm:text-3xl">
             “{decree}”
           </motion.p>
-          <motion.p variants={revealUp} custom={3} className="hud-label mt-4 text-white/35">
+          <motion.p variants={revealUp} custom={3} className="hud-label mt-4 text-white/55">
             — Zamasu Fundido
           </motion.p>
 
@@ -59,7 +59,7 @@ export function SealedModule({ realm, decree, promises, preview, previewLabel }:
             transition={{ duration: 1.2, delay: 0.9, ease: EASE_DIVINE }}
           >
             <GlyphDivider />
-            {previewLabel && <p className="hud-label mt-8 text-white/40">{previewLabel}</p>}
+            {previewLabel && <p className="hud-label mt-8 text-white/55">{previewLabel}</p>}
             <div className="mt-8">{preview}</div>
           </motion.div>
         )}
@@ -110,7 +110,7 @@ function SealCircle({ glyph }: { glyph: string }) {
       <div className="absolute inset-0 grid place-items-center">
         <span className="glow-text font-display text-6xl text-form sm:text-7xl">{glyph}</span>
       </div>
-      <div className="absolute inset-[30%] -z-10 rounded-full blur-2xl" style={{ background: 'var(--form-glow)' }} />
+      <div className="absolute inset-[15%] -z-10 rounded-full" style={{ background: 'radial-gradient(circle, var(--form-glow), transparent 65%)' }} />
     </motion.div>
   )
 }

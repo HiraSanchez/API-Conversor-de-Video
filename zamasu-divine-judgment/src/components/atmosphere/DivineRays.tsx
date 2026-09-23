@@ -16,7 +16,7 @@ export function DivineRays() {
         transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
       />
       <div
-        className="absolute left-1/2 top-0 h-[45vh] w-[70vw] -translate-x-1/2 blur-3xl"
+        className="absolute left-1/2 top-0 h-[45vh] w-[70vw] -translate-x-1/2"
         style={{ background: 'radial-gradient(ellipse at top, color-mix(in oklab, var(--form-accent) 22%, transparent), transparent 70%)' }}
       />
     </div>

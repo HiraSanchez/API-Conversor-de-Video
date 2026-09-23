@@ -85,10 +85,10 @@ export function PowerCodex() {
                     {p.index}
                   </span>
                   <span className="relative">
-                    <span className={clsx('block font-display text-xl tracking-wide transition-colors duration-500 sm:text-2xl', on ? 'text-white' : 'text-white/45 group-hover:text-white/80')}>
+                    <span className={clsx('block font-display text-xl tracking-wide transition-colors duration-500 sm:text-2xl', on ? 'text-white' : 'text-white/60 group-hover:text-white/85')}>
                       {p.name}
                     </span>
-                    <span className="hud-label mt-1 block text-white/35">{p.classification}</span>
+                    <span className="hud-label mt-1 block text-white/55">{p.classification}</span>
                   </span>
                 </button>
               )
@@ -130,7 +130,7 @@ export function PowerCodex() {
               {['left-3 top-3 border-l border-t', 'right-3 top-3 border-r border-t', 'left-3 bottom-3 border-l border-b', 'right-3 bottom-3 border-r border-b'].map((c) => (
                 <span key={c} aria-hidden className={`absolute h-4 w-4 ${c}`} style={{ borderColor: power.color }} />
               ))}
-              <p className="hud-label absolute left-6 top-5 text-white/40">Palco de invocação</p>
+              <p className="hud-label absolute left-6 top-5 text-white/55">Palco de invocação</p>
               <p className="hud-label absolute right-6 top-5" style={{ color: power.color }}>
                 {power.index} / 04
               </p>
@@ -168,7 +168,7 @@ export function PowerCodex() {
                     ['Natureza', power.nature],
                   ].map(([k, v]) => (
                     <div key={k} className="border-r border-white/10 px-4">
-                      <dt className="hud-label text-white/35">{k}</dt>
+                      <dt className="hud-label text-white/55">{k}</dt>
                       <dd className="mt-1 text-sm text-white/85">{v}</dd>
                     </div>
                   ))}

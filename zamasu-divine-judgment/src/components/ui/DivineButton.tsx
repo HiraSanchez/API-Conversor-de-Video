@@ -46,7 +46,7 @@ export function DivineButton({ children, variant = 'primary', to, onClick, glyph
       )}
       {/* Brilho que atravessa no hover */}
       <span aria-hidden className="absolute inset-0 overflow-hidden" style={{ clipPath: CLIP }}>
-        <span className="absolute -inset-y-2 -left-1/2 w-1/3 -skew-x-12 bg-white/40 blur-md transition-transform duration-[900ms] ease-[var(--ease-divine)] group-hover:translate-x-[420%]" />
+        <span className="absolute -inset-y-2 -left-1/2 w-1/3 -skew-x-12 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent)] transition-transform duration-[900ms] ease-[var(--ease-divine)] group-hover:translate-x-[420%]" />
       </span>
       {glyph && <span className="relative text-base leading-none">{glyph}</span>}
       <span className="relative">{children}</span>

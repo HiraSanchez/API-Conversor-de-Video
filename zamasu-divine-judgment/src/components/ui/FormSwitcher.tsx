@@ -73,7 +73,7 @@ export function FormSwitcher({ variant = 'compact', className }: FormSwitcherPro
             onClick={() => select(id)}
             className={clsx(
               'group relative overflow-hidden px-5 py-5 text-left transition-colors duration-700',
-              on ? 'text-white' : 'text-white/50 hover:text-white/85',
+              on ? 'text-white' : 'text-white/65 hover:text-white/90',
             )}
           >
             <span
@@ -96,7 +96,7 @@ export function FormSwitcher({ variant = 'compact', className }: FormSwitcherPro
               </span>
               <span className="font-display text-sm tracking-[0.2em] uppercase">{f.name}</span>
             </span>
-            <span className="relative mt-1 block font-scripture text-base italic opacity-80">{f.epithet}</span>
+            <span className="relative mt-1 block font-scripture text-base italic">{f.epithet}</span>
           </button>
         )
       })}

@@ -26,8 +26,8 @@ export default function ArchivePage() {
             <li key={s.label} className="bg-void/90 p-6">
               <span className="font-display text-3xl text-gold/80">{s.glyph}</span>
               <p className="mt-4 font-display tracking-wide text-white">{s.label}</p>
-              <p className="mt-1 text-xs text-white/45">{s.note}</p>
-              <p className="hud-label mt-4 text-white/25">0 registros</p>
+              <p className="mt-1 text-xs text-white/55">{s.note}</p>
+              <p className="hud-label mt-4 text-white/60">0 registros</p>
             </li>
           ))}
         </ul>

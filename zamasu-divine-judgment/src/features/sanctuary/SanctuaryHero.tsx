@@ -36,7 +36,7 @@ export function SanctuaryHero() {
         <motion.dl variants={revealUp} custom={3} className="mt-12 grid max-w-2xl grid-cols-1 border-l border-form/40 sm:grid-cols-2">
           {CHARACTER.dossier.map((item) => (
             <div key={item.label} className="border-b border-white/[0.06] py-3 pl-5 pr-4">
-              <dt className="hud-label text-white/40">{item.label}</dt>
+              <dt className="hud-label text-white/55">{item.label}</dt>
               <dd className="mt-1 font-display text-sm tracking-wide text-white/90">{item.value}</dd>
             </div>
           ))}

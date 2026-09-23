@@ -83,10 +83,10 @@ function RealmMenu({ onClose, current }: { onClose: () => void; current: string 
               className="border-b border-white/[0.06]"
             >
               <Link to={realm.path} className="group flex items-baseline gap-4 py-4 sm:gap-8 sm:py-5">
-                <span className="hud-label w-8 shrink-0 text-white/35">{String(i).padStart(2, '0')}</span>
+                <span className="hud-label w-8 shrink-0 text-white/55">{String(i).padStart(2, '0')}</span>
                 <span
                   className={`font-display text-2xl transition-colors duration-500 sm:text-4xl ${
-                    active ? 'text-form' : sealed ? 'text-white/40 group-hover:text-white/70' : 'text-white group-hover:text-form'
+                    active ? 'text-form' : sealed ? 'text-white/55 group-hover:text-white/80' : 'text-white group-hover:text-form'
                   }`}
                 >
                   <span className="mr-3 text-form/70">{realm.glyph}</span>

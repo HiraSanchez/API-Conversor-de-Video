@@ -40,7 +40,7 @@ export function RealmIndex() {
                     <span className={`block font-display text-2xl tracking-wide sm:text-4xl ${sealed ? 'text-white/55' : 'text-white'} transition-colors duration-500 group-hover:text-white`}>
                       {realm.label}
                     </span>
-                    <span className="mt-1 block font-scripture text-lg text-white/50 italic">{realm.summary}</span>
+                    <span className="mt-1 block font-scripture text-lg text-white/60 italic">{realm.summary}</span>
                   </span>
                   <span className="relative col-start-2 sm:col-start-auto">
                     {sealed ? (
@@ -62,11 +62,11 @@ export function RealmIndex() {
 
         <GlyphDivider className="mt-32" />
         <footer className="mt-10 flex flex-col items-center gap-2 text-center">
-          <p className="font-scripture text-lg text-white/50 italic">“Toda realidade observada é uma realidade registrada.”</p>
-          <p className="hud-label text-white/30">
+          <p className="font-scripture text-lg text-white/60 italic">“Toda realidade observada é uma realidade registrada.”</p>
+          <p className="hud-label text-white/60">
             Project Zamasu: Divine Judgment · Arquivado por <span className="text-gold">Hira</span> · Projeto de fã sem fins lucrativos
           </p>
-          <p className="max-w-xl text-xs text-white/25">
+          <p className="max-w-xl text-xs text-white/60">
             Dragon Ball Super e seus personagens pertencem a Akira Toriyama, Toyotarou, Shueisha e Toei Animation.
           </p>
         </footer>

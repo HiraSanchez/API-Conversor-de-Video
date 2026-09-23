@@ -62,15 +62,15 @@ export function CosmicBackdrop() {
       {/* Nebulosas */}
       <motion.div style={{ x: midX, y: midY }} className="absolute -inset-20">
         <div
-          className="absolute left-[8%] top-[12%] h-[55vmax] w-[55vmax] rounded-full opacity-40 blur-3xl"
+          className="absolute left-[8%] top-[12%] h-[55vmax] w-[55vmax] rounded-full opacity-40"
           style={{ background: 'radial-gradient(circle, color-mix(in oklab, var(--form-secondary) 35%, transparent), transparent 65%)' }}
         />
         <div
-          className="absolute right-[2%] top-[30%] h-[60vmax] w-[60vmax] rounded-full opacity-45 blur-3xl"
+          className="absolute right-[2%] top-[30%] h-[60vmax] w-[60vmax] rounded-full opacity-45"
           style={{ background: 'radial-gradient(circle, color-mix(in oklab, var(--form-primary) 30%, transparent), transparent 62%)' }}
         />
         <div
-          className="absolute bottom-[-20%] left-[30%] h-[50vmax] w-[70vmax] rounded-full opacity-30 blur-3xl"
+          className="absolute bottom-[-20%] left-[30%] h-[50vmax] w-[70vmax] rounded-full opacity-30"
           style={{ background: 'radial-gradient(circle, rgba(123, 44, 255, 0.35), transparent 65%)' }}
         />
       </motion.div>

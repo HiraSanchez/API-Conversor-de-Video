@@ -22,6 +22,7 @@ export function DimensionalCracks() {
       viewBox="0 0 1600 900"
       preserveAspectRatio="xMidYMid slice"
       className="pointer-events-none absolute inset-0 h-full w-full"
+      style={{ animation: 'crack-pulse 3.2s ease-in-out infinite alternate' }}
     >
       <defs>
         <filter id="crack-glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -43,11 +44,8 @@ export function DimensionalCracks() {
             strokeLinecap="round"
             strokeLinejoin="bevel"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: [0.5, 1, 0.6, 0.95] }}
-            transition={{
-              pathLength: { duration: 1.6, delay: 0.2 + i * 0.12, ease: EASE_JUDGMENT },
-              opacity: { duration: 3.2, repeat: Infinity, repeatType: 'mirror', delay: i * 0.3 },
-            }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1.6, delay: 0.2 + i * 0.12, ease: EASE_JUDGMENT }}
           />
           <motion.path
             d={d}

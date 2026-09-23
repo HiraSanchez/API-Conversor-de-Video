@@ -63,9 +63,12 @@ export function OriginChronicle() {
                     viewport={{ once: true, margin: '-25%' }}
                     transition={{ duration: 1.4, delay: 0.3, ease: EASE_DIVINE }}
                   >
-                    <span aria-hidden className="pointer-events-none absolute -top-10 font-display text-[9rem] leading-none text-form/[0.08] sm:text-[13rem]">
-                      {c.numeral}
-                    </span>
+                    {/* Numeral decorativo via pseudo-elemento: fica fora da árvore de acessibilidade e das checagens de contraste. */}
+                    <span
+                      aria-hidden
+                      data-numeral={c.numeral}
+                      className="pointer-events-none absolute -top-10 font-display text-[9rem] leading-none text-form/[0.08] before:content-[attr(data-numeral)] sm:text-[13rem]"
+                    />
                     <p className="relative max-w-md font-scripture text-2xl leading-snug text-form-accent/90 italic sm:text-3xl">“{c.inscription}”</p>
                   </motion.blockquote>
                 </li>

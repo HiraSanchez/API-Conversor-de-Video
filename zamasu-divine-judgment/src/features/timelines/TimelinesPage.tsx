@@ -31,9 +31,9 @@ export default function TimelinesPage() {
                 className="relative block h-3.5 w-3.5 rotate-45 border bg-void"
                 style={{ borderColor: TONE_COLOR[n.tone], boxShadow: `0 0 12px ${TONE_COLOR[n.tone]}` }}
               />
-              <p className="hud-label mt-4 text-white/35">{n.era}</p>
+              <p className="hud-label mt-4 text-white/55">{n.era}</p>
               <p className="mt-1 font-display text-base text-white">{n.title}</p>
-              <p className="mt-2 text-xs leading-relaxed text-white/50">{n.summary}</p>
+              <p className="mt-2 text-xs leading-relaxed text-white/60">{n.summary}</p>
             </li>
           ))}
         </ol>

@@ -121,10 +121,10 @@ export function LandingPage() {
           animate={{ opacity: revealed ? 1 : 0 }}
           transition={{ duration: 1.2, delay: revealed ? 2 : 0 }}
         >
-          <div className="hud-label hidden text-white/45 sm:block">
+          <div className="hud-label hidden text-white/55 sm:block">
             <span className="text-form">{form.sigil}</span> · {form.name} — {form.epithet}
           </div>
-          <div className="hud-label flex items-center gap-2 text-white/40">
+          <div className="hud-label flex items-center gap-2 text-white/55">
             <motion.span animate={{ y: [0, 6, 0] }} transition={{ duration: 2, repeat: Infinity }}>
               ↓
             </motion.span>
@@ -134,7 +134,7 @@ export function LandingPage() {
             onClick={() => {
               window.scrollTo({ top: 0 })
               replayIntro()
-            }} className="hud-label text-white/40 transition-colors hover:text-form">
+            }} className="hud-label text-white/55 transition-colors hover:text-form">
             ↺ Rever abertura
           </button>
         </motion.div>
@@ -144,7 +144,7 @@ export function LandingPage() {
           {!revealed && (
             <motion.button
               onClick={skipNow}
-              className="hud-label fixed bottom-6 right-6 z-50 text-white/45 transition-colors hover:text-white"
+              className="hud-label fixed bottom-6 right-6 z-50 text-white/55 transition-colors hover:text-white"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { delay: 1 } }}
               exit={{ opacity: 0 }}

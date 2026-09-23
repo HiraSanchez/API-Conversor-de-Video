@@ -4,12 +4,13 @@
  */
 export function GlitchOverlay() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden mix-blend-screen">
+    // Sem mix-blend-mode: sobre fundo quase preto o resultado é o mesmo e a composição fica bem mais barata.
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(90deg, rgba(255,92,225,0.12), transparent 30%, transparent 70%, rgba(46,230,166,0.12))',
+            'linear-gradient(90deg, rgba(255,92,225,0.08), transparent 30%, transparent 70%, rgba(46,230,166,0.08))',
           animation: 'glitch-slice 5.5s steps(1) infinite',
         }}
       />

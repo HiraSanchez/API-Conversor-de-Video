@@ -24,10 +24,11 @@ export default function ArenaPage() {
       ]}
       previewLabel={`Desafiantes registrados · ${CHALLENGERS.length} contra 1`}
       preview={
-        <div className="overflow-x-auto pb-2">
+        // Região rolável focável: no celular a tabela rola na horizontal e precisa ser alcançável pelo teclado.
+        <div className="overflow-x-auto pb-2" tabIndex={0} role="region" aria-label="Atributos dos desafiantes">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
-              <tr className="hud-label text-white/35">
+              <tr className="hud-label text-white/55">
                 <th className="py-3 pr-4 font-normal">Guerreiro</th>
                 {STAT_LABELS.map(([, label]) => (
                   <th key={label} className="px-2 py-3 font-normal">
@@ -43,7 +44,7 @@ export default function ArenaPage() {
                     <span className="font-display tracking-wide text-white" style={{ textShadow: `0 0 16px ${f.color}66` }}>
                       {f.name}
                     </span>
-                    <span className="ml-2 font-scripture text-white/45 italic">{f.title}</span>
+                    <span className="ml-2 font-scripture text-white/55 italic">{f.title}</span>
                   </td>
                   {STAT_LABELS.map(([key]) => (
                     <td key={key} className="px-2 py-3">

@@ -17,13 +17,19 @@ export function RevealText({ text, show, delay = 0, stagger = 0.08, className, w
   const Tag = motion[as]
   const words = text.split(' ')
   return (
-    <Tag className={className} aria-label={text}>
+    <Tag className={className}>
+      {/* Texto real para leitores de tela; as palavras animadas são só visuais. */}
+      <span className="sr-only">{text}</span>
       {words.map((w, i) => (
         <span key={`${w}-${i}`} aria-hidden className="inline-block overflow-hidden pb-[0.12em] align-bottom">
           <motion.span
             className={`inline-block ${wordClassName ?? ''}`}
             initial={false}
-            animate={show ? { y: '0%', opacity: 1, filter: 'blur(0px)' } : { y: '60%', opacity: 0, filter: 'blur(12px)' }}
+            animate={
+              show
+                ? { y: '0%', opacity: 1, filter: 'blur(0px)', transitionEnd: { filter: 'none' } }
+                : { y: '60%', opacity: 0, filter: 'blur(12px)' }
+            }
             transition={{ duration: 1.1, ease: EASE_DIVINE, delay: show ? delay + i * stagger : 0 }}
           >
             {w}

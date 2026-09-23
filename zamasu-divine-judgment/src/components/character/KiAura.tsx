@@ -28,9 +28,9 @@ export function KiAura({ intensity, className }: KiAuraProps) {
       >
         {/* Núcleo */}
         <div
-          className="absolute left-1/2 top-[48%] h-[82%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] blur-3xl"
+          className="absolute left-1/2 top-[48%] h-[82%] w-[70%] -translate-x-1/2 -translate-y-1/2"
           style={{
-            background: 'radial-gradient(ellipse, var(--form-glow) 0%, color-mix(in oklab, var(--form-secondary) 25%, transparent) 45%, transparent 70%)',
+            background: 'radial-gradient(ellipse closest-side, var(--form-glow) 0%, color-mix(in oklab, var(--form-secondary) 22%, transparent) 55%, transparent 100%)',
             animation: 'breathe 3.2s ease-in-out infinite',
           }}
         />
@@ -38,11 +38,12 @@ export function KiAura({ intensity, className }: KiAuraProps) {
         {FLAMES.map((f, i) => (
           <motion.div
             key={i}
-            className="absolute bottom-[8%] left-1/2 w-[26%] origin-bottom rounded-[50%] blur-2xl"
+            className="absolute bottom-[8%] left-1/2 w-[26%] origin-bottom"
             style={{
               height: `${f.h}%`,
               marginLeft: `calc(${f.x}% - 13%)`,
-              background: `linear-gradient(to top, color-mix(in oklab, var(--form-${i % 2 ? 'secondary' : 'primary'}) 55%, transparent), transparent 85%)`,
+              // Elipse radial ancorada embaixo: labareda de borda suave sem filtro de blur.
+              background: `radial-gradient(ellipse closest-side at 50% 100%, color-mix(in oklab, var(--form-${i % 2 ? 'secondary' : 'primary'}) 55%, transparent), transparent)`,
             }}
             animate={{ scaleY: [0.85, 1.08, 0.9], scaleX: [1, 0.86, 1], opacity: [0.55, 0.9, 0.6] }}
             transition={{ duration: f.dur, delay: f.delay, repeat: Infinity, ease: 'easeInOut' }}

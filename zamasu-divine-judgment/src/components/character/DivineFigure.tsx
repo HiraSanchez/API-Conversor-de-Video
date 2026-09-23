@@ -36,6 +36,9 @@ export function DivineFigure({ presence = 1, aura, offsetX, offsetY, className }
           filter: `blur(${(1 - presence) * 18}px) brightness(${0.4 + presence * 0.6})`,
           // Forma Infinita: o corpo se dissolve e se agiganta no cosmos.
           scale: infinite ? 1.08 : 1,
+          // Com presença total o filtro é removido: filtro num ancestral de algo que
+          // flutua obriga o navegador a refazê-lo a cada quadro.
+          transitionEnd: presence >= 1 ? { filter: 'none' } : undefined,
         }}
         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
       >

@@ -18,6 +18,10 @@ interface ZamasuSilhouetteProps {
  * Elementos de leitura imediata do personagem: moicano, orelhas pontudas de
  * Shinjin, brincos Potara, gola do traje de Kaioshin e o halo às costas.
  * Na Forma Corrompida, a metade direita do corpo ganha veias roxas.
+ *
+ * Desempenho: três SVGs empilhados. O corpo (com filtros de blur) é estático;
+ * o halo pulsa via transform do próprio <svg> (compositor) e a corrupção anima
+ * numa camada sem filtros. Assim nada força o blur a ser recalculado por quadro.
  */
 export function ZamasuSilhouette({ form, src, className }: ZamasuSilhouetteProps) {
   const uid = useId().replace(/:/g, '')
@@ -31,105 +35,116 @@ export function ZamasuSilhouette({ form, src, className }: ZamasuSilhouetteProps
   }
 
   return (
-    <svg viewBox="0 0 400 700" className={className} role="img" aria-label="Silhueta de Zamasu Fundido">
-      <defs>
-        <linearGradient id={body} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stopColor="#15151c" />
-          <stop offset="0.6" stopColor="#0a0a0e" />
-          <stop offset="1" stopColor="#050505" />
-        </linearGradient>
-        <linearGradient id={rim} x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0" style={{ stopColor: 'var(--form-primary)' }} />
-          <stop offset="0.5" style={{ stopColor: 'var(--form-accent)', stopOpacity: 0.3 }} />
-          <stop offset="1" style={{ stopColor: 'var(--form-secondary)' }} />
-        </linearGradient>
-        <radialGradient id={halo}>
-          <stop offset="0.8" style={{ stopColor: 'var(--form-accent)', stopOpacity: 0 }} />
-          <stop offset="0.9" style={{ stopColor: 'var(--form-accent)', stopOpacity: 0.9 }} />
-          <stop offset="1" style={{ stopColor: 'var(--form-primary)', stopOpacity: 0 }} />
-        </radialGradient>
-        <filter id={soft} x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="6" />
-        </filter>
-      </defs>
-
+    <div className={`relative ${className ?? ''}`} role="img" aria-label="Silhueta de Zamasu Fundido">
       {/* Halo divino às costas */}
-      <g style={{ transformOrigin: '200px 205px', animation: 'breathe 6s ease-in-out infinite' }}>
+      <svg viewBox="0 0 400 700" aria-hidden className="absolute inset-0 h-full w-full" style={{ transformOrigin: '50% 29.3%', animation: 'breathe 6s ease-in-out infinite' }}>
+        <defs>
+          <radialGradient id={halo}>
+            <stop offset="0.8" style={{ stopColor: 'var(--form-accent)', stopOpacity: 0 }} />
+            <stop offset="0.9" style={{ stopColor: 'var(--form-accent)', stopOpacity: 0.9 }} />
+            <stop offset="1" style={{ stopColor: 'var(--form-primary)', stopOpacity: 0 }} />
+          </radialGradient>
+          <filter id={`${soft}-halo`} x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
+        </defs>
         <circle cx="200" cy="205" r="128" fill={`url(#${halo})`} />
         <circle cx="200" cy="205" r="118" fill="none" style={{ stroke: 'var(--form-primary)' }} strokeWidth="1.5" opacity="0.8" />
-        <circle cx="200" cy="205" r="118" fill="none" style={{ stroke: 'var(--form-accent)' }} strokeWidth="6" opacity="0.35" filter={`url(#${soft})`} />
-      </g>
+        <circle cx="200" cy="205" r="118" fill="none" style={{ stroke: 'var(--form-accent)' }} strokeWidth="6" opacity="0.35" filter={`url(#${soft}-halo)`} />
+      </svg>
 
-      {/* Contorno luminoso (rim light) — desenhado atrás e desfocado */}
-      <g filter={`url(#${soft})`} opacity="0.9">
-        <Figure fill="none" stroke={`url(#${rim})`} strokeWidth={5} />
-      </g>
+      {/* Corpo (estático) */}
+      <svg viewBox="0 0 400 700" aria-hidden className="absolute inset-0 h-full w-full">
+        <defs>
+          <linearGradient id={body} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stopColor="#15151c" />
+            <stop offset="0.6" stopColor="#0a0a0e" />
+            <stop offset="1" stopColor="#050505" />
+          </linearGradient>
+          <linearGradient id={rim} x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" style={{ stopColor: 'var(--form-primary)' }} />
+            <stop offset="0.5" style={{ stopColor: 'var(--form-accent)', stopOpacity: 0.3 }} />
+            <stop offset="1" style={{ stopColor: 'var(--form-secondary)' }} />
+          </linearGradient>
+          <filter id={soft} x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
+        </defs>
 
-      {/* Corpo */}
-      <Figure fill={`url(#${body})`} stroke={`url(#${rim})`} strokeWidth={1.2} />
+        {/* Contorno luminoso (rim light) — desenhado atrás e desfocado */}
+        <g filter={`url(#${soft})`} opacity="0.9">
+          <Figure fill="none" stroke={`url(#${rim})`} strokeWidth={5} />
+        </g>
 
-      {/* Detalhes do traje */}
-      <g fill="none" style={{ stroke: 'var(--form-primary)' }} strokeWidth="1" opacity="0.55">
-        <path d="M168 214 L200 262 L232 214" />
-        <path d="M146 352 C 176 364, 224 364, 254 352" />
-        <path d="M150 366 C 178 376, 222 376, 250 366" opacity="0.6" />
-        <path d="M200 262 L200 352" opacity="0.5" />
-        <path d="M200 376 L 186 690" opacity="0.35" />
-      </g>
+        {/* Corpo */}
+        <Figure fill={`url(#${body})`} stroke={`url(#${rim})`} strokeWidth={1.2} />
 
-      {/* Brincos Potara */}
-      <g>
-        <circle cx="166" cy="166" r="6" style={{ fill: 'var(--form-secondary)' }} />
-        <circle cx="234" cy="166" r="6" style={{ fill: 'var(--form-secondary)' }} />
-        <circle cx="166" cy="166" r="12" style={{ fill: 'var(--form-secondary)' }} opacity="0.35" filter={`url(#${soft})`} />
-        <circle cx="234" cy="166" r="12" style={{ fill: 'var(--form-secondary)' }} opacity="0.35" filter={`url(#${soft})`} />
-      </g>
+        {/* Detalhes do traje */}
+        <g fill="none" style={{ stroke: 'var(--form-primary)' }} strokeWidth="1" opacity="0.55">
+          <path d="M168 214 L200 262 L232 214" />
+          <path d="M146 352 C 176 364, 224 364, 254 352" />
+          <path d="M150 366 C 178 376, 222 376, 250 366" opacity="0.6" />
+          <path d="M200 262 L200 352" opacity="0.5" />
+          <path d="M200 376 L 186 690" opacity="0.35" />
+        </g>
 
-      {/* Olhos */}
-      <g>
-        <path d="M186 146 L196 148" strokeWidth="2.4" strokeLinecap="round" style={{ stroke: 'var(--form-accent)' }} />
-        <path d="M204 148 L214 146" strokeWidth="2.4" strokeLinecap="round" style={{ stroke: 'var(--form-accent)' }} />
-        <path d="M184 146 L216 146" strokeWidth="7" strokeLinecap="round" style={{ stroke: 'var(--form-primary)' }} opacity="0.35" filter={`url(#${soft})`} />
-      </g>
+        {/* Brincos Potara */}
+        <g>
+          <circle cx="166" cy="166" r="6" style={{ fill: 'var(--form-secondary)' }} />
+          <circle cx="234" cy="166" r="6" style={{ fill: 'var(--form-secondary)' }} />
+          <circle cx="166" cy="166" r="12" style={{ fill: 'var(--form-secondary)' }} opacity="0.35" filter={`url(#${soft})`} />
+          <circle cx="234" cy="166" r="12" style={{ fill: 'var(--form-secondary)' }} opacity="0.35" filter={`url(#${soft})`} />
+        </g>
 
-      {/* Corrupção: metade direita do corpo (esquerda do observador) */}
-      <AnimatePresence>
-        {form === 'corrupted' && (
-          <motion.g
-            key="corruption"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2 }}
-          >
-            <g fill="#2a0b45" opacity="0.85">
-              <path d="M200 196 C 170 200, 132 208, 118 232 L 124 296 L 146 352 C 160 330, 176 300, 184 270 C 192 240, 198 220, 200 196 Z" />
-              <path d="M118 230 C 98 254, 90 300, 88 342 L 80 424 L 100 430 L 110 350 C 114 314, 120 286, 130 262 Z" />
-            </g>
-            <g fill="none" stroke="#c77dff" strokeWidth="1.6" strokeLinecap="round">
-              {[
-                'M196 210 C 180 240, 160 256, 142 300 C 136 316, 132 326, 130 336',
-                'M170 240 C 150 250, 138 262, 126 262',
-                'M112 262 C 104 290, 100 312, 98 336',
-                'M190 170 C 180 176, 176 186, 178 196',
-                'M110 350 C 100 380, 96 400, 92 420',
-              ].map((d, i) => (
-                <motion.path
-                  key={d}
-                  d={d}
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1, opacity: [0.6, 1, 0.6] }}
-                  transition={{
-                    pathLength: { duration: 1.4, delay: i * 0.1 },
-                    opacity: { duration: 2, repeat: Infinity, delay: i * 0.2 },
-                  }}
-                />
-              ))}
-            </g>
-          </motion.g>
-        )}
-      </AnimatePresence>
-    </svg>
+        {/* Olhos */}
+        <g>
+          <path d="M186 146 L196 148" strokeWidth="2.4" strokeLinecap="round" style={{ stroke: 'var(--form-accent)' }} />
+          <path d="M204 148 L214 146" strokeWidth="2.4" strokeLinecap="round" style={{ stroke: 'var(--form-accent)' }} />
+          <path d="M184 146 L216 146" strokeWidth="7" strokeLinecap="round" style={{ stroke: 'var(--form-primary)' }} opacity="0.35" filter={`url(#${soft})`} />
+        </g>
+
+      </svg>
+
+      {/* Corrupção: metade direita do corpo (esquerda do observador) — camada sem filtros */}
+      <svg viewBox="0 0 400 700" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full">
+        <AnimatePresence>
+          {form === 'corrupted' && (
+            <motion.g
+              key="corruption"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2 }}
+            >
+              <g fill="#2a0b45" opacity="0.85">
+                <path d="M200 196 C 170 200, 132 208, 118 232 L 124 296 L 146 352 C 160 330, 176 300, 184 270 C 192 240, 198 220, 200 196 Z" />
+                <path d="M118 230 C 98 254, 90 300, 88 342 L 80 424 L 100 430 L 110 350 C 114 314, 120 286, 130 262 Z" />
+              </g>
+              <g fill="none" stroke="#c77dff" strokeWidth="1.6" strokeLinecap="round">
+                {[
+                  'M196 210 C 180 240, 160 256, 142 300 C 136 316, 132 326, 130 336',
+                  'M170 240 C 150 250, 138 262, 126 262',
+                  'M112 262 C 104 290, 100 312, 98 336',
+                  'M190 170 C 180 176, 176 186, 178 196',
+                  'M110 350 C 100 380, 96 400, 92 420',
+                ].map((d, i) => (
+                  <motion.path
+                    key={d}
+                    d={d}
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1, opacity: [0.6, 1, 0.6] }}
+                    transition={{
+                      pathLength: { duration: 1.4, delay: i * 0.1 },
+                      opacity: { duration: 2, repeat: Infinity, delay: i * 0.2 },
+                    }}
+                  />
+                ))}
+              </g>
+            </motion.g>
+          )}
+        </AnimatePresence>
+      </svg>
+    </div>
   )
 }
 

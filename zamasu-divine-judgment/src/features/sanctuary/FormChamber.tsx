@@ -24,7 +24,7 @@ export function FormChamber() {
           <div className="relative mx-auto h-[56dvh] max-h-[620px] min-h-[380px]">
             <div
               aria-hidden
-              className="absolute inset-x-[-30%] bottom-0 h-24 rounded-[50%] blur-2xl"
+              className="absolute inset-x-[-30%] bottom-0 h-24 rounded-[50%]"
               style={{ background: 'radial-gradient(ellipse, var(--form-glow), transparent 70%)' }}
             />
             <DivineFigure className="h-full" />
