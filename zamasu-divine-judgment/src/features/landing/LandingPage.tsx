@@ -67,7 +67,7 @@ export function LandingPage() {
             aura={past('aura') ? undefined : past('silhouette') ? 0.25 : 0}
             offsetX={figX}
             offsetY={figY}
-            className="h-[78dvh] max-h-[860px] opacity-60 sm:opacity-80 lg:h-[88dvh] lg:opacity-100"
+            className="h-[78dvh] max-h-[860px] opacity-35 sm:opacity-60 lg:h-[88dvh] lg:opacity-100"
           />
         </div>
 

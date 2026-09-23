@@ -1,5 +1,7 @@
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { ORIGIN_CHAPTERS } from './character'
+import { CHARACTER, ORIGIN_CHAPTERS } from './character'
 import { POWERS } from './powers'
 import { CHALLENGERS, ZAMASU_BOSS } from '@/features/arena/fighters'
 import { DILEMMAS } from '@/features/tribunal/dilemmas'
@@ -9,6 +11,14 @@ import { POWER_EFFECTS } from '@/features/sanctuary/powers/effects'
 const unique = (xs: string[]) => new Set(xs).size === xs.length
 
 describe('Conteúdo do santuário', () => {
+  it('toda arte configurada existe em public/', () => {
+    for (const path of Object.values(CHARACTER.art)) {
+      if (path === null) continue
+      expect(path.startsWith('/assets/')).toBe(true)
+      expect(existsSync(resolve(process.cwd(), 'public', path.slice(1))), path).toBe(true)
+    }
+  })
+
   it('capítulos da origem têm ids únicos e textos preenchidos', () => {
     expect(unique(ORIGIN_CHAPTERS.map((c) => c.id))).toBe(true)
     for (const c of ORIGIN_CHAPTERS) expect(c.body.length && c.inscription.length).toBeTruthy()

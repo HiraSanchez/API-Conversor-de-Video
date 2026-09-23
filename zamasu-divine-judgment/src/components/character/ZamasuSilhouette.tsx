@@ -4,55 +4,28 @@ import type { FormId } from '@/core/forms/forms'
 
 interface ZamasuSilhouetteProps {
   form: FormId
-  /**
-   * Arte oficial/encomendada para substituir o placeholder.
-   * Recomendado: PNG/WebP com fundo transparente, proporção 4:7.
-   */
-  src?: string | null
   className?: string
 }
 
 /**
  * Silhueta estilizada do Zamasu Fundido (placeholder vetorial).
+ * Usada só quando não há arte configurada em `CHARACTER.art` (ver CharacterArt).
  *
  * Elementos de leitura imediata do personagem: moicano, orelhas pontudas de
  * Shinjin, brincos Potara, gola do traje de Kaioshin e o halo às costas.
  * Na Forma Corrompida, a metade direita do corpo ganha veias roxas.
  *
- * Desempenho: três SVGs empilhados. O corpo (com filtros de blur) é estático;
- * o halo pulsa via transform do próprio <svg> (compositor) e a corrupção anima
- * numa camada sem filtros. Assim nada força o blur a ser recalculado por quadro.
+ * Desempenho: SVGs empilhados. O corpo (com filtros de blur) é estático e a
+ * corrupção anima numa camada sem filtros. O halo vem de DivineHalo (DivineFigure).
  */
-export function ZamasuSilhouette({ form, src, className }: ZamasuSilhouetteProps) {
+export function ZamasuSilhouette({ form, className }: ZamasuSilhouetteProps) {
   const uid = useId().replace(/:/g, '')
   const rim = `rim-${uid}`
   const body = `body-${uid}`
-  const halo = `halo-${uid}`
   const soft = `soft-${uid}`
-
-  if (src) {
-    return <img src={src} alt="Zamasu Fundido" className={className} draggable={false} />
-  }
 
   return (
     <div className={`relative ${className ?? ''}`} role="img" aria-label="Silhueta de Zamasu Fundido">
-      {/* Halo divino às costas */}
-      <svg viewBox="0 0 400 700" aria-hidden className="absolute inset-0 h-full w-full" style={{ transformOrigin: '50% 29.3%', animation: 'breathe 6s ease-in-out infinite' }}>
-        <defs>
-          <radialGradient id={halo}>
-            <stop offset="0.8" style={{ stopColor: 'var(--form-accent)', stopOpacity: 0 }} />
-            <stop offset="0.9" style={{ stopColor: 'var(--form-accent)', stopOpacity: 0.9 }} />
-            <stop offset="1" style={{ stopColor: 'var(--form-primary)', stopOpacity: 0 }} />
-          </radialGradient>
-          <filter id={`${soft}-halo`} x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="6" />
-          </filter>
-        </defs>
-        <circle cx="200" cy="205" r="128" fill={`url(#${halo})`} />
-        <circle cx="200" cy="205" r="118" fill="none" style={{ stroke: 'var(--form-primary)' }} strokeWidth="1.5" opacity="0.8" />
-        <circle cx="200" cy="205" r="118" fill="none" style={{ stroke: 'var(--form-accent)' }} strokeWidth="6" opacity="0.35" filter={`url(#${soft}-halo)`} />
-      </svg>
-
       {/* Corpo (estático) */}
       <svg viewBox="0 0 400 700" aria-hidden className="absolute inset-0 h-full w-full">
         <defs>

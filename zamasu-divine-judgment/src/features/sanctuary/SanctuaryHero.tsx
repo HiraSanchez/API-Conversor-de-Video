@@ -15,7 +15,7 @@ export function SanctuaryHero() {
   return (
     <section className="relative flex min-h-dvh items-center overflow-hidden px-4 pb-20 pt-32 sm:px-10 lg:px-16">
       <div className="pointer-events-none absolute inset-0 flex items-end justify-center lg:justify-end lg:pr-[8vw]">
-        <DivineFigure offsetX={figX} offsetY={figY} className="h-[70dvh] opacity-40 lg:h-[84dvh] lg:opacity-100" />
+        <DivineFigure pose="judgment" offsetX={figX} offsetY={figY} className="h-[62dvh] opacity-40 lg:h-[76dvh] lg:opacity-100" />
       </div>
 
       <motion.div initial="hidden" animate="visible" className="relative z-10 mx-auto w-full max-w-7xl">

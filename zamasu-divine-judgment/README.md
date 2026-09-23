@@ -4,7 +4,7 @@
 
 Uma experiência web cinematográfica inspirada em **Zamasu Fundido** (Dragon Ball Super). Não é uma página de fã comum: é um **santuário digital**, uma dimensão criada por uma entidade que se considera a própria definição de perfeição. A proposta mistura abertura de anime, interface de jogo AAA e site premium.
 
-> **Aviso:** projeto de fã, sem fins lucrativos. Dragon Ball Super e seus personagens pertencem a Akira Toriyama, Toyotarou, Shueisha e Toei Animation. **Nenhuma arte oficial está incluída.** A silhueta do personagem é um placeholder vetorial feito em código, pronto para ser trocado por arte própria (veja [Trocando a arte](#trocando-a-arte-do-personagem)).
+> **Aviso:** projeto de fã, sem fins lucrativos. Dragon Ball Super e seus personagens pertencem a Akira Toriyama, Toyotarou, Shueisha e Toei Animation. As artes do personagem em `public/assets/zamasu/` são imagens de Dragon Ball com fundo removido, usadas aqui como fã. **Antes de publicar o site abertamente**, avalie trocá-las por fan art autorizada ou arte encomendada: a Toei costuma pedir a remoção de conteúdo com arte oficial. A troca é simples (veja [Trocando a arte](#trocando-a-arte-do-personagem)), e sem arte o site volta a usar uma silhueta vetorial feita em código.
 
 ---
 
@@ -33,14 +33,14 @@ Ao abrir o site, uma abertura em **7 fases** acontece:
 2. Fragmentos de energia surgem no vazio.
 3. Dois brincos **Potara** convergem e se fundem num clarão.
 4. A dimensão se forma: estrelas, nebulosas e ruínas de templo dos Kaioshins.
-5. A silhueta de Zamasu Fundido se materializa.
+5. Zamasu Fundido se materializa diante do halo.
 6. A aura explode, e o ambiente reage com clarão, onda de choque e tremor.
 7. A frase principal e os botões **"Entrar no Santuário"** e **"Desafiar a Divindade"** aparecem.
 
 A abertura roda uma vez por sessão do navegador. Dá para **pular** e depois **rever**.
 
 ### Sistema de Formas
-Um seletor no topo (I · II · ∞) muda a atmosfera do site **inteiro**: cores, partículas, efeitos e a própria silhueta.
+Um seletor no topo (I · II · ∞) muda a atmosfera do site **inteiro**: cores, partículas, efeitos e o próprio personagem.
 
 | | Forma Divina | Forma Corrompida | Forma Infinita |
 |---|---|---|---|
@@ -48,7 +48,7 @@ Um seletor no topo (I · II · ∞) muda a atmosfera do site **inteiro**: cores,
 | Cores | dourado + esmeralda | roxo + magenta | ciano cósmico + violeta |
 | Partículas | sobem devagar, ordenadas | tremem, "saltam" e deixam rastro | giram num vórtice ao redor da entidade |
 | Cena | feixes de luz celestial | rachaduras na tela, falhas visuais | anéis orbitais gigantes |
-| Silhueta | halo dourado | metade do corpo tomada por veias roxas | o corpo se dissolve no cosmos |
+| Personagem | brilho dourado de contorno | metade do corpo tingida de roxo, com falhas cromáticas | o corpo fica translúcido, com o cosmos visível por dentro |
 
 A forma escolhida fica salva: ao voltar ao site, ela continua ativa.
 
@@ -141,10 +141,10 @@ Use o `preview` para ver o site exatamente como vai ficar publicado. Ele é mais
 O projeto tem três camadas de verificação, e todas rodam automaticamente no GitHub Actions (`.github/workflows/zamasu-web.yml`) a cada push ou pull request que mexa nesta pasta.
 
 ### Testes unitários: `npm run test`
-39 testes cobrindo as regras que o código assume em silêncio:
+40 testes cobrindo as regras que o código assume em silêncio:
 - **Formas:** toda cor de partícula precisa ser hex de 6 dígitos (o motor concatena transparência em hex; `rgb()` quebraria sem aviso), e os limites de densidade e rastro precisam ser seguros.
 - **Motor de partículas:** a intro começa do vazio absoluto, a população cresce aos poucos sem passar do máximo, explosões expiram, reduced motion reduz a densidade e o DPR é limitado.
-- **Conteúdo:** todo poder tem efeito visual registrado; ids únicos em lutadores, habilidades, dilemas e linha temporal; nenhuma habilidade custa mais Ki do que o lutador tem.
+- **Conteúdo:** todo arquivo de arte configurado existe; todo poder tem efeito visual registrado; ids únicos em lutadores, habilidades, dilemas e linha temporal; nenhuma habilidade custa mais Ki do que o lutador tem.
 - **Hira's Archive:** salvar, atualizar sem duplicar, filtrar, remover e sobreviver a dado corrompido no storage.
 - **Estado:** ciclo das formas e persistência.
 
@@ -205,7 +205,7 @@ zamasu-divine-judgment/
     │   └── storage/         localStorage/sessionStorage à prova de falha
     ├── components/
     │   ├── atmosphere/      Camadas de cena (fundo, raios, rachaduras, glitch, cosmos)
-    │   ├── character/       Silhueta, aura de Ki, figura divina
+    │   ├── character/       Arte + tratamentos por forma, halo, aura de Ki, silhueta de fallback
     │   ├── layout/          Barra superior, transição entre páginas
     │   └── ui/              Botões, títulos, revelação de texto, glitch, sigilo
     ├── features/
@@ -228,19 +228,23 @@ zamasu-divine-judgment/
 
 ## Trocando a arte do personagem
 
-1. Coloque as imagens em `public/assets/zamasu/`: `divine.webp`, `corrupted.webp` e `infinite.webp`.
-   - Formato: **WebP ou PNG com fundo transparente**, proporção **4:7** (ex.: 800×1400), personagem centralizado e com os pés na base.
-2. Em `src/data/character.ts`, troque os `null` pelos caminhos:
+O site usa duas **poses**, configuradas em `src/data/character.ts`:
 
 ```ts
-portraits: {
-  divine: '/assets/zamasu/divine.webp',
-  corrupted: '/assets/zamasu/corrupted.webp',
-  infinite: '/assets/zamasu/infinite.webp',
+art: {
+  full: '/assets/zamasu/fused-full.webp',         // corpo inteiro: Portal e câmara de formas
+  judgment: '/assets/zamasu/fused-judgment.webp', // retrato apontando: topo do Santuário
 },
 ```
 
-Aura, halo, parallax e transições continuam funcionando; só o corpo da silhueta é substituído. Mais detalhes em `public/assets/README.md`.
+| Pose | Onde aparece | Formato esperado |
+|---|---|---|
+| `full` | Portal e câmara de formas, com o halo animado atrás | PNG/WebP **com fundo transparente**, **800×1400** (4:7), com o **rosto em 50% da largura e 29% da altura**, que é o centro do halo |
+| `judgment` | Topo do Santuário, sem halo | PNG/WebP com fundo transparente, qualquer proporção próxima de 4:5. Bordas cortadas pela imagem se dissolvem sozinhas |
+
+Os efeitos de cada forma (dourado, roxo, cosmos) são aplicados por cima da arte automaticamente, então **uma imagem por pose basta**.
+
+Para usar **sem arte de terceiros**, troque os caminhos por `null`: o site volta para a silhueta vetorial. O passo a passo para recortar e alinhar uma arte nova está em `public/assets/README.md`.
 
 ---
 
@@ -277,7 +281,7 @@ O site é uma SPA (aplicação de página única). O comando `npm run build` ger
 | **2** | **Arena Divina:** implementar o motor de batalha (puro e testável), interface de combate, IA do Zamasu, efeitos via `divineEvents` | Tipos e elenco prontos |
 | **3** | **Tribunal Divino** (dilemas → eixos morais → veredito) e **Linhas Temporais** (timeline interativa + linhas alternativas) | Tipos e dados iniciais prontos |
 | **4** | **Hira's Archive:** criar personagem, salvar batalhas e linhas temporais, exportar/importar; trocar o repositório local por um backend | Modelo e repositório local prontos |
-| Contínuo | Arte própria, trilha sonora e efeitos sonoros (camada de áudio ligada ao `divineEvents`), teste em dispositivos reais | — |
+| Contínuo | Arte autorizada para publicação aberta, trilha sonora e efeitos sonoros (camada de áudio ligada ao `divineEvents`), teste em dispositivos reais | — |
 
 ---
 

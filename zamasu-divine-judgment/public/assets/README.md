@@ -1,26 +1,23 @@
-# Assets substituíveis
+# Arte do personagem
 
-A primeira versão usa **placeholders vetoriais** (SVG desenhado em código) para não depender de arte com direitos autorais.
+As artes ficam em `public/assets/zamasu/` e são configuradas em `src/data/character.ts` (`CHARACTER.art`).
 
-## Retratos do Zamasu Fundido
+| Arquivo | Pose | Uso |
+|---|---|---|
+| `fused-full.webp` | `full` | Corpo inteiro. Portal e câmara de formas, com o halo animado atrás |
+| `fused-judgment.webp` | `judgment` | Retrato apontando para o visitante. Topo do Santuário |
 
-1. Coloque as imagens em `public/assets/zamasu/`:
-   - `divine.webp` — Forma Divina
-   - `corrupted.webp` — Forma Corrompida
-   - `infinite.webp` — Forma Infinita
-2. Formato recomendado: WebP/PNG **com fundo transparente**, proporção **4:7** (ex.: 800×1400), personagem centralizado e com os pés na base.
-3. Em `src/data/character.ts`, troque `null` pelo caminho:
+> **Direitos:** estas imagens são arte de Dragon Ball (Toei/Shueisha) com o fundo removido, usadas num projeto de fã. Para publicar o site abertamente, prefira fan art autorizada ou arte encomendada. Com `null` no lugar do caminho, o site usa uma silhueta vetorial própria.
 
-```ts
-portraits: {
-  divine: '/assets/zamasu/divine.webp',
-  corrupted: '/assets/zamasu/corrupted.webp',
-  infinite: '/assets/zamasu/infinite.webp',
-},
-```
+## Como preparar uma arte nova
 
-A aura, o halo, o parallax e as transições continuam funcionando — só o corpo da silhueta é substituído.
+1. **Remova o fundo.** O que funcionou aqui foi o [rembg](https://github.com/danielgatis/rembg) com o modelo específico para anime:
+   ```bash
+   pip install "rembg[cpu]" pillow
+   rembg i -m isnet-anime entrada.png saida.png
+   ```
+2. **Pose `full`:** coloque o personagem numa tela transparente de **800×1400**, com o **rosto em (400, 410)**. É o centro do halo desenhado pelo site (50% × 29,3%). Os pés devem terminar antes do fim da imagem.
+3. **Exporte em WebP** com transparência (qualidade ~88). As artes atuais têm 64 KB e 49 KB.
+4. Atualize os caminhos em `CHARACTER.art`. O teste `toda arte configurada existe em public/` (`npm run test`) acusa caminho errado.
 
-## Retratos da Arena
-
-Cada lutador em `src/features/arena/fighters.ts` tem `portrait: null`, pronto para receber o caminho da arte na Fase 2.
+Os tratamentos de cada forma (brilho dourado, corrupção roxa, cosmos) usam a própria imagem como máscara, então funcionam com qualquer arte recortada.

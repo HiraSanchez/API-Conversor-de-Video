@@ -1,19 +1,23 @@
-import type { FormId } from '@/core/forms/forms'
+/**
+ * Poses de arte do personagem.
+ * - `full`: corpo inteiro, 4:7, cabeça alinhada ao halo do site (50%, 29.3%).
+ * - `judgment`: retrato dramático em 3/4, sem halo, bordas cortadas pelo enquadramento.
+ */
+export type ArtPose = 'full' | 'judgment'
 
 /**
  * Dossiê do personagem.
  *
- * `portraits`: substitua `null` pelo caminho da arte (ex.: '/assets/zamasu/divine.webp')
- * e a silhueta vetorial é trocada automaticamente. Ver public/assets/README.md.
+ * `art`: caminho de cada pose em `public/`. Com `null`, a pose cai na silhueta
+ * vetorial (útil para publicar sem arte de terceiros). Ver public/assets/README.md.
  */
 export const CHARACTER = {
   name: 'Zamasu Fundido',
   alias: 'Merged Zamasu',
-  portraits: {
-    divine: null,
-    corrupted: null,
-    infinite: null,
-  } satisfies Record<FormId, string | null>,
+  art: {
+    full: '/assets/zamasu/fused-full.webp',
+    judgment: '/assets/zamasu/fused-judgment.webp',
+  } satisfies Record<ArtPose, string | null> as Record<ArtPose, string | null>,
   dossier: [
     { label: 'Origem', value: 'Universo 10' },
     { label: 'Natureza', value: 'Fusão Potara — Zamasu + Goku Black' },
