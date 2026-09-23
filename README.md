@@ -23,6 +23,7 @@ O projeto usa **FastAPI**, **yt-dlp** e **FFmpeg**. A interface web já vem embu
 app.py              Backend FastAPI e lógica de conversão
 index.html          Interface web
 android-app/        Aplicativo Android nativo BitMobo Media Studio
+zamasu-divine-judgment/  Projeto independente (React + Vite) — ver o README da pasta
 .github/workflows/  Build automatico do APK Android
 requirements.txt    Dependências Python
 .env.example        Modelo de configuração
