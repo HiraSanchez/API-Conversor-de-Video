@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { realmById, REALMS } from './realms'
+import { CURRENT_PHASE, realmById, REALMS } from './realms'
 
 describe('Registro de reinos', () => {
   it('ids e rotas são únicos', () => {
@@ -11,10 +11,10 @@ describe('Registro de reinos', () => {
     for (const r of REALMS) expect(r.path.startsWith('/')).toBe(true)
   })
 
-  it('reinos abertos pertencem à fase 1 e selados a fases futuras', () => {
+  it('reinos abertos pertencem a fases entregues e selados a fases futuras', () => {
     for (const r of REALMS) {
-      if (r.status === 'open') expect(r.phase).toBe(1)
-      else expect(r.phase).toBeGreaterThan(1)
+      if (r.status === 'open') expect(r.phase).toBeLessThanOrEqual(CURRENT_PHASE)
+      else expect(r.phase).toBeGreaterThan(CURRENT_PHASE)
     }
   })
 

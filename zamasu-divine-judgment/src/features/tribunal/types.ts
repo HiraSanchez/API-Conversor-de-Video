@@ -1,9 +1,9 @@
 /**
- * TRIBUNAL DIVINO — contratos narrativos (Fase 3).
+ * TRIBUNAL DIVINO — contratos narrativos.
  *
- * Cada escolha move o visitante em quatro eixos morais. Zamasu reage à
- * direção acumulada, não a respostas isoladas: a mesma frase pode soar
- * como aprovação ou ameaça dependendo de quem você já provou ser.
+ * Cada escolha move o visitante em quatro eixos morais e muda a
+ * "disposição" de Zamasu (quanto ele reconhece ou despreza você).
+ * O veredito sai do conjunto das respostas, não de uma resposta isolada.
  */
 export type MoralAxis = 'order' | 'mercy' | 'purity' | 'freedom'
 
@@ -27,8 +27,23 @@ export interface Dilemma {
 export type Verdict = 'worthy' | 'tolerated' | 'mortal' | 'condemned'
 
 export interface TribunalSession {
+  /** dilemmaId → choiceId, na ordem em que foram respondidos. */
   answers: Record<string, string>
   axes: Record<MoralAxis, number>
   disposition: number
-  verdict: Verdict | null
+}
+
+export interface VerdictResult {
+  verdict: Verdict
+  dominantAxis: MoralAxis
+  disposition: number
+  axes: Record<MoralAxis, number>
+}
+
+/** O que o Tribunal lembra entre visitas. */
+export interface TribunalMemory {
+  lastVerdict: Verdict | null
+  lastDominantAxis: MoralAxis | null
+  trials: number
+  lastAt: string | null
 }

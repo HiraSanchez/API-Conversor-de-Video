@@ -62,8 +62,18 @@ A forma escolhida fica salva: ao voltar ao site, ela continua ativa.
   - *Cólera Divina:* colunas de luz caem do céu.
   - *Expansão da Corrupção:* veias tomam tudo até o palco virar universo.
 
+### O Tribunal Divino (`/tribunal`)
+O Zamasu julga você. São **sete dilemas** de justiça, do concreto ("uma civilização pode destruir outros mundos") ao existencial ("você criaria um mundo sem sofrimento, mas sem livre-arbítrio?").
+
+- Cada resposta tem uma **fala própria do Zamasu** e faz o mundo reagir: reconhecimento brilha em dourado, desprezo faz a tela tremer em roxo.
+- Uma **balança** mostra para que lado o julgamento está pendendo.
+- Por trás, cada escolha move você em **quatro eixos morais**: Ordem, Misericórdia, Pureza e Liberdade.
+- No fim vem o **veredito**: *Digno*, *Tolerado*, *Mortal* ou *Condenado*, com o seu perfil moral e a leitura do Zamasu sobre o seu eixo dominante.
+- **O Zamasu lembra de você.** Na próxima visita, ele comenta o veredito anterior ("Você de novo, mortal…"). Recarregar a página no meio do julgamento retoma do mesmo dilema.
+- Dá para jogar só no teclado: **1–3** (ou **A–C**) escolhem, **Enter** avança.
+
 ### Reinos selados (fases futuras)
-**Arena Divina**, **Tribunal Divino**, **Arquivo das Linhas Temporais** e **Hira's Archive** já existem como páginas. Em vez de "em breve", o próprio Zamasu recusa a entrada, e a página mostra uma prévia dos dados que já estão prontos no código (atributos dos lutadores, primeiro dilema, linha temporal canônica).
+**Arena Divina**, **Arquivo das Linhas Temporais** e **Hira's Archive** já existem como páginas. Em vez de "em breve", o próprio Zamasu recusa a entrada, e a página mostra uma prévia dos dados que já estão prontos no código (atributos dos lutadores, linha temporal canônica, estantes do arquivo).
 
 ---
 
@@ -141,10 +151,11 @@ Use o `preview` para ver o site exatamente como vai ficar publicado. Ele é mais
 O projeto tem três camadas de verificação, e todas rodam automaticamente no GitHub Actions (`.github/workflows/zamasu-web.yml`) a cada push ou pull request que mexa nesta pasta.
 
 ### Testes unitários: `npm run test`
-40 testes cobrindo as regras que o código assume em silêncio:
+63 testes cobrindo as regras que o código assume em silêncio:
 - **Formas:** toda cor de partícula precisa ser hex de 6 dígitos (o motor concatena transparência em hex; `rgb()` quebraria sem aviso), e os limites de densidade e rastro precisam ser seguros.
 - **Motor de partículas:** a intro começa do vazio absoluto, a população cresce aos poucos sem passar do máximo, explosões expiram, reduced motion reduz a densidade e o DPR é limitado.
 - **Conteúdo:** todo arquivo de arte configurado existe; todo poder tem efeito visual registrado; ids únicos em lutadores, habilidades, dilemas e linha temporal; nenhuma habilidade custa mais Ki do que o lutador tem.
+- **Tribunal:** os 4 vereditos são alcançáveis com os dilemas reais; limiares de veredito; soma de eixos e disposição; o mesmo dilema não conta duas vezes; memória entre visitas e retomada no meio do julgamento.
 - **Hira's Archive:** salvar, atualizar sem duplicar, filtrar, remover e sobreviver a dado corrompido no storage.
 - **Estado:** ciclo das formas e persistência.
 
@@ -155,6 +166,7 @@ Rodam num Chromium de verdade, em **desktop (1440px)** e **celular (Pixel 5)**:
 - a abertura roda até o fim, pode ser pulada, não repete na sessão e pode ser revista;
 - a troca de forma altera a atmosfera e persiste após recarregar;
 - os quatro poderes podem ser invocados;
+- o Tribunal completo só no teclado até o veredito, a memória na volta, retomar depois de recarregar e abandonar o julgamento;
 - navegação por teclado: setas no códex de poderes, `Esc` fecha o menu;
 - com *reduced motion*, as animações CSS são neutralizadas;
 - **acessibilidade (axe-core):** nenhuma violação séria ou crítica em nenhum reino.
@@ -174,7 +186,7 @@ Rodam num Chromium de verdade, em **desktop (1440px)** e **celular (Pixel 5)**:
 │ TopBar          → sigilo, seletor de formas, menu dos reinos                 │
 │ ScreenFx/quake  → clarões e tremores de tela                                 │
 │  ┌──────────── troca de página com transição dimensional ────────────┐       │
-│  │ Portal │ Santuário │ Reinos selados (carregados sob demanda)       │       │
+│  │ Portal │ Santuário │ Tribunal │ Reinos selados (sob demanda)       │       │
 │  └────────────────────────────────────────────────────────────────────┘       │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -213,9 +225,9 @@ zamasu-divine-judgment/
     │   ├── landing/         O Portal + índice dos reinos
     │   ├── sanctuary/       Dossiê, crônica, câmara de formas, códex de poderes
     │   │   └── powers/      Um efeito visual por habilidade
-    │   ├── arena/           [Fase 2] tipos do motor de batalha + elenco
-    │   ├── tribunal/        [Fase 3] tipos narrativos + dilemas
-    │   ├── timelines/       [Fase 3] grafo temporal + linha canônica
+    │   ├── tribunal/        Dilemas, regras do veredito (puras), balança, revelação
+    │   ├── arena/           [Fase 3] tipos do motor de batalha + elenco
+    │   ├── timelines/       [Fase 4] grafo temporal + linha canônica
     │   ├── archive/         [Fase 4] modelo de dados + repositório local
     │   └── sealed/          Página-padrão de reino selado e 404
     ├── data/                Personagem, capítulos da origem, poderes
@@ -278,9 +290,9 @@ O site é uma SPA (aplicação de página única). O comando `npm run build` ger
 | Fase | Escopo | Situação |
 |---|---|---|
 | **1** | Portal cinematográfico, Sistema de Formas, Santuário (origem + poderes), arquitetura de expansão, testes e CI | ✅ Concluída |
-| **2** | **Arena Divina:** implementar o motor de batalha (puro e testável), interface de combate, IA do Zamasu, efeitos via `divineEvents` | Tipos e elenco prontos |
-| **3** | **Tribunal Divino** (dilemas → eixos morais → veredito) e **Linhas Temporais** (timeline interativa + linhas alternativas) | Tipos e dados iniciais prontos |
-| **4** | **Hira's Archive:** criar personagem, salvar batalhas e linhas temporais, exportar/importar; trocar o repositório local por um backend | Modelo e repositório local prontos |
+| **2** | **Tribunal Divino:** 7 dilemas, 4 eixos morais, veredito, memória entre visitas | ✅ Concluída |
+| **3** | **Arena Divina:** implementar o motor de batalha (puro e testável), interface de combate, IA do Zamasu, efeitos via `divineEvents` | Tipos e elenco prontos |
+| **4** | **Linhas Temporais** (timeline interativa + linhas alternativas) e **Hira's Archive** (criar personagem, salvar batalhas, vereditos e linhas temporais, exportar/importar) | Tipos, dados e repositório local prontos |
 | Contínuo | Arte autorizada para publicação aberta, trilha sonora e efeitos sonoros (camada de áudio ligada ao `divineEvents`), teste em dispositivos reais | — |
 
 ---
@@ -295,4 +307,5 @@ O site é uma SPA (aplicação de página única). O comando `npm run build` ger
 | Recarregar `/santuario` dá erro 404 depois de publicar | O host não redireciona as rotas para `index.html` | Veja a seção [Publicando](#publicando-deploy) |
 | `npm run test:e2e` diz que o navegador não foi encontrado | Chromium do Playwright não instalado | `npx playwright install chromium` |
 | Quero ver a abertura de novo | Ela roda só uma vez por sessão | Clique em **"↺ Rever abertura"** no rodapé do Portal, ou abra o site numa aba anônima |
+| Quero que o Zamasu "esqueça" meus julgamentos | A memória do Tribunal fica salva no navegador | Apague os dados do site no navegador (ou use uma aba anônima) |
 | Quero voltar à Forma Divina ao abrir | A forma escolhida fica salva no navegador | Clique em **I** no seletor do topo |
