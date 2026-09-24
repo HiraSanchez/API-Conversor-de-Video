@@ -1,0 +1,150 @@
+@import 'tailwindcss';
+
+/* ───────────── Tokens fixos da identidade ───────────── */
+@theme {
+  --color-void: #050505;
+  --color-abyss: #0b0b10;
+  --color-emerald: #2ee6a6;
+  --color-emerald-deep: #0f8f66;
+  --color-cosmic: #b45cff;
+  --color-cosmic-deep: #4b1a8f;
+  --color-gold: #e8c46a;
+  --color-gold-pale: #f5dc9a;
+  --color-celestial: #fff6dc;
+
+  --font-display: 'Cinzel', 'Trajan Pro', serif;
+  --font-scripture: 'Cormorant Garamond', 'Georgia', serif;
+  --font-hud: 'Chakra Petch', ui-monospace, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --ease-divine: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-judgment: cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+/* Tokens dinâmicos: mudam com a forma ativa (aplicados via JS no :root). */
+@theme inline {
+  --color-form: var(--form-primary);
+  --color-form-2: var(--form-secondary);
+  --color-form-accent: var(--form-accent);
+  --color-form-glow: var(--form-glow);
+}
+
+@property --form-primary { syntax: '<color>'; inherits: true; initial-value: #e8c46a; }
+@property --form-secondary { syntax: '<color>'; inherits: true; initial-value: #2ee6a6; }
+@property --form-accent { syntax: '<color>'; inherits: true; initial-value: #fff6dc; }
+@property --form-glow { syntax: '<color>'; inherits: true; initial-value: rgba(232, 196, 106, 0.55); }
+@property --form-sky { syntax: '<color>'; inherits: true; initial-value: #1a1408; }
+@property --form-sky-edge { syntax: '<color>'; inherits: true; initial-value: #050505; }
+
+:root {
+  color-scheme: dark;
+  /* @property permite interpolar as cores: a forma inteira "respira" na troca. */
+  transition:
+    --form-primary 1.4s var(--ease-divine),
+    --form-secondary 1.4s var(--ease-divine),
+    --form-accent 1.4s var(--ease-divine),
+    --form-glow 1.4s var(--ease-divine),
+    --form-sky 1.8s var(--ease-divine),
+    --form-sky-edge 1.8s var(--ease-divine);
+}
+
+html,
+body {
+  background: var(--color-void);
+  color: #e9e6df;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--form-primary) 45%, transparent);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 1px solid var(--form-primary);
+  outline-offset: 4px;
+}
+
+/* Scrollbar discreta */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--form-primary) 40%, transparent) transparent;
+}
+
+@utility text-divine-gradient {
+  background-image: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    var(--form-accent) 35%,
+    var(--form-primary) 75%,
+    color-mix(in oklab, var(--form-primary) 50%, #000) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility glow-text {
+  /* drop-shadow (e não text-shadow) para funcionar com texto em gradiente */
+  filter: drop-shadow(0 0 18px var(--form-glow)) drop-shadow(0 0 36px color-mix(in oklab, var(--form-glow) 45%, transparent));
+}
+
+@utility hud-label {
+  font-family: var(--font-hud);
+  font-size: 0.68rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+@utility grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+
+/* Linha de varredura para o glitch da Forma Corrompida */
+@keyframes glitch-slice {
+  0%, 100% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+  8% { clip-path: inset(12% 0 70% 0); transform: translateX(-6px); }
+  16% { clip-path: inset(55% 0 30% 0); transform: translateX(8px); }
+  24% { clip-path: inset(80% 0 6% 0); transform: translateX(-3px); }
+  32% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  47% { opacity: 1; }
+  48% { opacity: 0.35; }
+  50% { opacity: 1; }
+  78% { opacity: 0.8; }
+  79% { opacity: 0.2; }
+  80% { opacity: 1; }
+}
+
+@keyframes crack-pulse {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+@keyframes slow-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

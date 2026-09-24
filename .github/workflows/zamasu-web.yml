@@ -1,0 +1,54 @@
+name: Zamasu Web
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "zamasu-divine-judgment/**"
+      - ".github/workflows/zamasu-web.yml"
+  pull_request:
+    paths:
+      - "zamasu-divine-judgment/**"
+      - ".github/workflows/zamasu-web.yml"
+
+defaults:
+  run:
+    working-directory: zamasu-divine-judgment
+
+jobs:
+  quality:
+    name: Lint, testes unitários e build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: zamasu-divine-judgment/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+
+  e2e:
+    name: E2E (Playwright + axe)
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: zamasu-divine-judgment/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - name: Relatório em caso de falha
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: zamasu-divine-judgment/test-results
+          retention-days: 7
