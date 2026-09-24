@@ -1,33 +1,45 @@
-import { DILEMMAS } from './dilemmas'
-import { realmById } from '@/app/realms'
-import { SealedModule } from '@/features/sealed/SealedModule'
+import { AnimatePresence } from 'framer-motion'
+import { DilemmaStage } from './DilemmaStage'
+import { TribunalSummons } from './TribunalSummons'
+import { VerdictReveal } from './VerdictReveal'
+import { DivineFigure } from '@/components/character/DivineFigure'
+import { PageFrame } from '@/components/layout/PageFrame'
+import { useDepth, usePointerParallax } from '@/hooks/usePointerParallax'
+import { useTribunalStore } from '@/store/useTribunalStore'
 
+/**
+ * Tribunal Divino: convocação → sete dilemas → veredito.
+ * O estado vive em useTribunalStore (persistido): recarregar não perde o julgamento.
+ */
 export default function TribunalPage() {
-  const first = DILEMMAS[0]
+  const stage = useTribunalStore((s) => s.stage)
+  const { x, y } = usePointerParallax()
+  const figX = useDepth(x, 14)
+  const figY = useDepth(y, 8)
+
   return (
-    <SealedModule
-      realm={realmById('tribunal')}
-      decree="Antes de julgar, eu observo. Cada resposta sua já está sendo pesada."
-      promises={[
-        `${DILEMMAS.length} dilemas iniciais sobre justiça, poder e sacrifício`,
-        'Quatro eixos morais: ordem, misericórdia, pureza e liberdade',
-        'Zamasu reage ao conjunto das suas escolhas, não a respostas isoladas',
-        'Veredito final: digno, tolerado, mortal — ou condenado',
-      ]}
-      previewLabel="Primeiro dilema · somente leitura"
-      preview={
-        <div className="mx-auto max-w-2xl text-left">
-          <p className="font-display text-xl leading-snug text-white sm:text-2xl">{first.prompt}</p>
-          <ol className="mt-6 space-y-2">
-            {first.choices.map((c, i) => (
-              <li key={c.id} className="flex gap-4 border-l border-white/10 py-2 pl-4 text-white/55">
-                <span className="hud-label text-form/70">{String.fromCharCode(65 + i)}</span>
-                {c.text}
-              </li>
-            ))}
-          </ol>
+    <PageFrame>
+      <section className="relative flex min-h-dvh items-start overflow-hidden px-4 pb-24 pt-32 sm:px-10 lg:items-center lg:px-16">
+        {/* O juiz: sempre presente, apontando para quem é julgado */}
+        <div className="pointer-events-none absolute inset-0 flex items-end justify-end lg:pr-[6vw]">
+          <DivineFigure
+            pose="judgment"
+            offsetX={figX}
+            offsetY={figY}
+            className="h-[55dvh] opacity-20 sm:opacity-30 lg:h-[74dvh] lg:opacity-90"
+          />
         </div>
-      }
-    />
+
+        {stage !== 'summons' && <h1 className="sr-only">Tribunal Divino</h1>}
+
+        <div className="relative z-10 mx-auto w-full max-w-7xl">
+          <AnimatePresence mode="wait">
+            {stage === 'summons' && <TribunalSummons key="summons" />}
+            {stage === 'trial' && <DilemmaStage key="trial" />}
+            {stage === 'verdict' && <VerdictReveal key="verdict" />}
+          </AnimatePresence>
+        </div>
+      </section>
+    </PageFrame>
   )
 }

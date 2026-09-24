@@ -1,6 +1,6 @@
 import { clsx } from 'clsx'
 import { motion } from 'framer-motion'
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 import { Link } from 'react-router'
 
 type Variant = 'primary' | 'ghost'
@@ -13,6 +13,8 @@ interface DivineButtonProps {
   glyph?: string
   className?: string
   disabled?: boolean
+  /** React 19: ref como prop. Só vale para a variante botão (sem `to`). */
+  ref?: Ref<HTMLButtonElement>
 }
 
 const MotionLink = motion.create(Link)
@@ -20,9 +22,9 @@ const MotionLink = motion.create(Link)
 /** Recorte angular dos cantos: lembra placas de interface de jogo, não botões de site. */
 const CLIP = 'polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px)'
 
-export function DivineButton({ children, variant = 'primary', to, onClick, glyph, className, disabled }: DivineButtonProps) {
+export function DivineButton({ children, variant = 'primary', to, onClick, glyph, className, disabled, ref }: DivineButtonProps) {
   const classes = clsx(
-    'group relative inline-flex items-center justify-center gap-3 px-7 py-4 font-display text-sm font-semibold tracking-[0.22em] uppercase',
+    'group relative inline-flex items-center justify-center gap-3 whitespace-nowrap px-7 py-4 font-display text-sm font-semibold tracking-[0.22em] uppercase',
     'transition-[color,box-shadow] duration-500 ease-[var(--ease-divine)] disabled:pointer-events-none disabled:opacity-40',
     variant === 'primary'
       ? 'text-void shadow-[0_0_40px_-6px_var(--form-glow)] hover:shadow-[0_0_70px_-4px_var(--form-glow)]'
@@ -67,7 +69,7 @@ export function DivineButton({ children, variant = 'primary', to, onClick, glyph
     )
   }
   return (
-    <motion.button type="button" onClick={onClick} disabled={disabled} className={classes} {...motionProps}>
+    <motion.button ref={ref} type="button" onClick={onClick} disabled={disabled} className={classes} {...motionProps}>
       {inner}
     </motion.button>
   )
